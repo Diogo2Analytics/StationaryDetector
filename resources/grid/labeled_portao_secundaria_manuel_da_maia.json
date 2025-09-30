@@ -1,0 +1,2130 @@
+[
+    {
+        "label": 1,
+        "coordinates": [
+            0,
+            0
+        ]
+    },
+    {
+        "label": 2,
+        "coordinates": [
+            50,
+            0
+        ]
+    },
+    {
+        "label": 3,
+        "coordinates": [
+            100,
+            0
+        ]
+    },
+    {
+        "label": 4,
+        "coordinates": [
+            150,
+            0
+        ]
+    },
+    {
+        "label": 5,
+        "coordinates": [
+            200,
+            0
+        ]
+    },
+    {
+        "label": 6,
+        "coordinates": [
+            250,
+            0
+        ]
+    },
+    {
+        "label": 7,
+        "coordinates": [
+            300,
+            0
+        ]
+    },
+    {
+        "label": 8,
+        "coordinates": [
+            350,
+            0
+        ]
+    },
+    {
+        "label": 9,
+        "coordinates": [
+            400,
+            0
+        ]
+    },
+    {
+        "label": 10,
+        "coordinates": [
+            450,
+            0
+        ]
+    },
+    {
+        "label": 11,
+        "coordinates": [
+            500,
+            0
+        ]
+    },
+    {
+        "label": 12,
+        "coordinates": [
+            550,
+            0
+        ]
+    },
+    {
+        "label": 13,
+        "coordinates": [
+            600,
+            0
+        ]
+    },
+    {
+        "label": 14,
+        "coordinates": [
+            650,
+            0
+        ]
+    },
+    {
+        "label": 15,
+        "coordinates": [
+            700,
+            0
+        ]
+    },
+    {
+        "label": 16,
+        "coordinates": [
+            750,
+            0
+        ]
+    },
+    {
+        "label": 17,
+        "coordinates": [
+            800,
+            0
+        ]
+    },
+    {
+        "label": 18,
+        "coordinates": [
+            850,
+            0
+        ]
+    },
+    {
+        "label": 19,
+        "coordinates": [
+            900,
+            0
+        ]
+    },
+    {
+        "label": 20,
+        "coordinates": [
+            0,
+            50
+        ]
+    },
+    {
+        "label": 21,
+        "coordinates": [
+            50,
+            50
+        ]
+    },
+    {
+        "label": 22,
+        "coordinates": [
+            100,
+            50
+        ]
+    },
+    {
+        "label": 23,
+        "coordinates": [
+            150,
+            50
+        ]
+    },
+    {
+        "label": 24,
+        "coordinates": [
+            200,
+            50
+        ]
+    },
+    {
+        "label": 25,
+        "coordinates": [
+            250,
+            50
+        ]
+    },
+    {
+        "label": 26,
+        "coordinates": [
+            300,
+            50
+        ]
+    },
+    {
+        "label": 27,
+        "coordinates": [
+            350,
+            50
+        ]
+    },
+    {
+        "label": 28,
+        "coordinates": [
+            400,
+            50
+        ]
+    },
+    {
+        "label": 29,
+        "coordinates": [
+            450,
+            50
+        ]
+    },
+    {
+        "label": 30,
+        "coordinates": [
+            500,
+            50
+        ]
+    },
+    {
+        "label": 31,
+        "coordinates": [
+            550,
+            50
+        ]
+    },
+    {
+        "label": 32,
+        "coordinates": [
+            600,
+            50
+        ]
+    },
+    {
+        "label": 33,
+        "coordinates": [
+            650,
+            50
+        ]
+    },
+    {
+        "label": 34,
+        "coordinates": [
+            700,
+            50
+        ]
+    },
+    {
+        "label": 35,
+        "coordinates": [
+            750,
+            50
+        ]
+    },
+    {
+        "label": 36,
+        "coordinates": [
+            800,
+            50
+        ]
+    },
+    {
+        "label": 37,
+        "coordinates": [
+            850,
+            50
+        ]
+    },
+    {
+        "label": 38,
+        "coordinates": [
+            900,
+            50
+        ]
+    },
+    {
+        "label": 39,
+        "coordinates": [
+            0,
+            100
+        ]
+    },
+    {
+        "label": 40,
+        "coordinates": [
+            50,
+            100
+        ]
+    },
+    {
+        "label": 41,
+        "coordinates": [
+            100,
+            100
+        ]
+    },
+    {
+        "label": 42,
+        "coordinates": [
+            150,
+            100
+        ]
+    },
+    {
+        "label": 43,
+        "coordinates": [
+            200,
+            100
+        ]
+    },
+    {
+        "label": 44,
+        "coordinates": [
+            250,
+            100
+        ]
+    },
+    {
+        "label": 45,
+        "coordinates": [
+            300,
+            100
+        ]
+    },
+    {
+        "label": 46,
+        "coordinates": [
+            350,
+            100
+        ]
+    },
+    {
+        "label": 47,
+        "coordinates": [
+            400,
+            100
+        ]
+    },
+    {
+        "label": 48,
+        "coordinates": [
+            450,
+            100
+        ]
+    },
+    {
+        "label": 49,
+        "coordinates": [
+            500,
+            100
+        ]
+    },
+    {
+        "label": 50,
+        "coordinates": [
+            550,
+            100
+        ]
+    },
+    {
+        "label": 51,
+        "coordinates": [
+            600,
+            100
+        ]
+    },
+    {
+        "label": 52,
+        "coordinates": [
+            650,
+            100
+        ]
+    },
+    {
+        "label": 53,
+        "coordinates": [
+            700,
+            100
+        ]
+    },
+    {
+        "label": 54,
+        "coordinates": [
+            750,
+            100
+        ]
+    },
+    {
+        "label": 55,
+        "coordinates": [
+            800,
+            100
+        ]
+    },
+    {
+        "label": 56,
+        "coordinates": [
+            850,
+            100
+        ]
+    },
+    {
+        "label": 57,
+        "coordinates": [
+            900,
+            100
+        ]
+    },
+    {
+        "label": 58,
+        "coordinates": [
+            0,
+            150
+        ]
+    },
+    {
+        "label": 59,
+        "coordinates": [
+            50,
+            150
+        ]
+    },
+    {
+        "label": 60,
+        "coordinates": [
+            100,
+            150
+        ]
+    },
+    {
+        "label": 61,
+        "coordinates": [
+            150,
+            150
+        ]
+    },
+    {
+        "label": 62,
+        "coordinates": [
+            200,
+            150
+        ]
+    },
+    {
+        "label": 63,
+        "coordinates": [
+            250,
+            150
+        ]
+    },
+    {
+        "label": 64,
+        "coordinates": [
+            300,
+            150
+        ]
+    },
+    {
+        "label": 65,
+        "coordinates": [
+            350,
+            150
+        ]
+    },
+    {
+        "label": 66,
+        "coordinates": [
+            400,
+            150
+        ]
+    },
+    {
+        "label": 67,
+        "coordinates": [
+            450,
+            150
+        ]
+    },
+    {
+        "label": 68,
+        "coordinates": [
+            500,
+            150
+        ]
+    },
+    {
+        "label": 69,
+        "coordinates": [
+            550,
+            150
+        ]
+    },
+    {
+        "label": 70,
+        "coordinates": [
+            600,
+            150
+        ]
+    },
+    {
+        "label": 71,
+        "coordinates": [
+            650,
+            150
+        ]
+    },
+    {
+        "label": 72,
+        "coordinates": [
+            700,
+            150
+        ]
+    },
+    {
+        "label": 73,
+        "coordinates": [
+            750,
+            150
+        ]
+    },
+    {
+        "label": 74,
+        "coordinates": [
+            800,
+            150
+        ]
+    },
+    {
+        "label": 75,
+        "coordinates": [
+            850,
+            150
+        ]
+    },
+    {
+        "label": 76,
+        "coordinates": [
+            900,
+            150
+        ]
+    },
+    {
+        "label": 77,
+        "coordinates": [
+            0,
+            200
+        ]
+    },
+    {
+        "label": 78,
+        "coordinates": [
+            50,
+            200
+        ]
+    },
+    {
+        "label": 79,
+        "coordinates": [
+            100,
+            200
+        ]
+    },
+    {
+        "label": 80,
+        "coordinates": [
+            150,
+            200
+        ]
+    },
+    {
+        "label": 81,
+        "coordinates": [
+            200,
+            200
+        ]
+    },
+    {
+        "label": 82,
+        "coordinates": [
+            250,
+            200
+        ]
+    },
+    {
+        "label": 83,
+        "coordinates": [
+            300,
+            200
+        ]
+    },
+    {
+        "label": 84,
+        "coordinates": [
+            350,
+            200
+        ]
+    },
+    {
+        "label": 85,
+        "coordinates": [
+            400,
+            200
+        ]
+    },
+    {
+        "label": 86,
+        "coordinates": [
+            450,
+            200
+        ]
+    },
+    {
+        "label": 87,
+        "coordinates": [
+            500,
+            200
+        ]
+    },
+    {
+        "label": 88,
+        "coordinates": [
+            550,
+            200
+        ]
+    },
+    {
+        "label": 89,
+        "coordinates": [
+            600,
+            200
+        ]
+    },
+    {
+        "label": 90,
+        "coordinates": [
+            650,
+            200
+        ]
+    },
+    {
+        "label": 91,
+        "coordinates": [
+            700,
+            200
+        ]
+    },
+    {
+        "label": 92,
+        "coordinates": [
+            750,
+            200
+        ]
+    },
+    {
+        "label": 93,
+        "coordinates": [
+            800,
+            200
+        ]
+    },
+    {
+        "label": 94,
+        "coordinates": [
+            850,
+            200
+        ]
+    },
+    {
+        "label": 95,
+        "coordinates": [
+            900,
+            200
+        ]
+    },
+    {
+        "label": 96,
+        "coordinates": [
+            0,
+            250
+        ]
+    },
+    {
+        "label": 97,
+        "coordinates": [
+            50,
+            250
+        ]
+    },
+    {
+        "label": 98,
+        "coordinates": [
+            100,
+            250
+        ]
+    },
+    {
+        "label": 99,
+        "coordinates": [
+            150,
+            250
+        ]
+    },
+    {
+        "label": 100,
+        "coordinates": [
+            200,
+            250
+        ]
+    },
+    {
+        "label": 101,
+        "coordinates": [
+            250,
+            250
+        ]
+    },
+    {
+        "label": 102,
+        "coordinates": [
+            300,
+            250
+        ]
+    },
+    {
+        "label": 103,
+        "coordinates": [
+            350,
+            250
+        ]
+    },
+    {
+        "label": 104,
+        "coordinates": [
+            400,
+            250
+        ]
+    },
+    {
+        "label": 105,
+        "coordinates": [
+            450,
+            250
+        ]
+    },
+    {
+        "label": 106,
+        "coordinates": [
+            500,
+            250
+        ]
+    },
+    {
+        "label": 107,
+        "coordinates": [
+            550,
+            250
+        ]
+    },
+    {
+        "label": 108,
+        "coordinates": [
+            600,
+            250
+        ]
+    },
+    {
+        "label": 109,
+        "coordinates": [
+            650,
+            250
+        ]
+    },
+    {
+        "label": 110,
+        "coordinates": [
+            700,
+            250
+        ]
+    },
+    {
+        "label": 111,
+        "coordinates": [
+            750,
+            250
+        ]
+    },
+    {
+        "label": 112,
+        "coordinates": [
+            800,
+            250
+        ]
+    },
+    {
+        "label": 113,
+        "coordinates": [
+            850,
+            250
+        ]
+    },
+    {
+        "label": 114,
+        "coordinates": [
+            900,
+            250
+        ]
+    },
+    {
+        "label": 115,
+        "coordinates": [
+            0,
+            300
+        ]
+    },
+    {
+        "label": 116,
+        "coordinates": [
+            50,
+            300
+        ]
+    },
+    {
+        "label": 117,
+        "coordinates": [
+            100,
+            300
+        ]
+    },
+    {
+        "label": 118,
+        "coordinates": [
+            150,
+            300
+        ]
+    },
+    {
+        "label": 119,
+        "coordinates": [
+            200,
+            300
+        ]
+    },
+    {
+        "label": 120,
+        "coordinates": [
+            250,
+            300
+        ]
+    },
+    {
+        "label": 121,
+        "coordinates": [
+            300,
+            300
+        ]
+    },
+    {
+        "label": 122,
+        "coordinates": [
+            350,
+            300
+        ]
+    },
+    {
+        "label": 123,
+        "coordinates": [
+            400,
+            300
+        ]
+    },
+    {
+        "label": 124,
+        "coordinates": [
+            450,
+            300
+        ]
+    },
+    {
+        "label": 125,
+        "coordinates": [
+            500,
+            300
+        ]
+    },
+    {
+        "label": 126,
+        "coordinates": [
+            550,
+            300
+        ]
+    },
+    {
+        "label": 127,
+        "coordinates": [
+            600,
+            300
+        ]
+    },
+    {
+        "label": 128,
+        "coordinates": [
+            650,
+            300
+        ]
+    },
+    {
+        "label": 129,
+        "coordinates": [
+            700,
+            300
+        ]
+    },
+    {
+        "label": 130,
+        "coordinates": [
+            750,
+            300
+        ]
+    },
+    {
+        "label": 131,
+        "coordinates": [
+            800,
+            300
+        ]
+    },
+    {
+        "label": 132,
+        "coordinates": [
+            850,
+            300
+        ]
+    },
+    {
+        "label": 133,
+        "coordinates": [
+            900,
+            300
+        ]
+    },
+    {
+        "label": 134,
+        "coordinates": [
+            0,
+            350
+        ]
+    },
+    {
+        "label": 135,
+        "coordinates": [
+            50,
+            350
+        ]
+    },
+    {
+        "label": 136,
+        "coordinates": [
+            100,
+            350
+        ]
+    },
+    {
+        "label": 137,
+        "coordinates": [
+            150,
+            350
+        ]
+    },
+    {
+        "label": 138,
+        "coordinates": [
+            200,
+            350
+        ]
+    },
+    {
+        "label": 139,
+        "coordinates": [
+            250,
+            350
+        ]
+    },
+    {
+        "label": 140,
+        "coordinates": [
+            300,
+            350
+        ]
+    },
+    {
+        "label": 141,
+        "coordinates": [
+            350,
+            350
+        ]
+    },
+    {
+        "label": 142,
+        "coordinates": [
+            400,
+            350
+        ]
+    },
+    {
+        "label": 143,
+        "coordinates": [
+            450,
+            350
+        ]
+    },
+    {
+        "label": 144,
+        "coordinates": [
+            500,
+            350
+        ]
+    },
+    {
+        "label": 145,
+        "coordinates": [
+            550,
+            350
+        ]
+    },
+    {
+        "label": 146,
+        "coordinates": [
+            600,
+            350
+        ]
+    },
+    {
+        "label": 147,
+        "coordinates": [
+            650,
+            350
+        ]
+    },
+    {
+        "label": 148,
+        "coordinates": [
+            700,
+            350
+        ]
+    },
+    {
+        "label": 149,
+        "coordinates": [
+            750,
+            350
+        ]
+    },
+    {
+        "label": 150,
+        "coordinates": [
+            800,
+            350
+        ]
+    },
+    {
+        "label": 151,
+        "coordinates": [
+            850,
+            350
+        ]
+    },
+    {
+        "label": 152,
+        "coordinates": [
+            900,
+            350
+        ]
+    },
+    {
+        "label": 153,
+        "coordinates": [
+            0,
+            400
+        ]
+    },
+    {
+        "label": 154,
+        "coordinates": [
+            50,
+            400
+        ]
+    },
+    {
+        "label": 155,
+        "coordinates": [
+            100,
+            400
+        ]
+    },
+    {
+        "label": 156,
+        "coordinates": [
+            150,
+            400
+        ]
+    },
+    {
+        "label": 157,
+        "coordinates": [
+            200,
+            400
+        ]
+    },
+    {
+        "label": 158,
+        "coordinates": [
+            250,
+            400
+        ]
+    },
+    {
+        "label": 159,
+        "coordinates": [
+            300,
+            400
+        ]
+    },
+    {
+        "label": 160,
+        "coordinates": [
+            350,
+            400
+        ]
+    },
+    {
+        "label": 161,
+        "coordinates": [
+            400,
+            400
+        ]
+    },
+    {
+        "label": 162,
+        "coordinates": [
+            450,
+            400
+        ]
+    },
+    {
+        "label": 163,
+        "coordinates": [
+            500,
+            400
+        ]
+    },
+    {
+        "label": 164,
+        "coordinates": [
+            550,
+            400
+        ]
+    },
+    {
+        "label": 165,
+        "coordinates": [
+            600,
+            400
+        ]
+    },
+    {
+        "label": 166,
+        "coordinates": [
+            650,
+            400
+        ]
+    },
+    {
+        "label": 167,
+        "coordinates": [
+            700,
+            400
+        ]
+    },
+    {
+        "label": 168,
+        "coordinates": [
+            750,
+            400
+        ]
+    },
+    {
+        "label": 169,
+        "coordinates": [
+            800,
+            400
+        ]
+    },
+    {
+        "label": 170,
+        "coordinates": [
+            850,
+            400
+        ]
+    },
+    {
+        "label": 171,
+        "coordinates": [
+            900,
+            400
+        ]
+    },
+    {
+        "label": 172,
+        "coordinates": [
+            0,
+            450
+        ]
+    },
+    {
+        "label": 173,
+        "coordinates": [
+            50,
+            450
+        ]
+    },
+    {
+        "label": 174,
+        "coordinates": [
+            100,
+            450
+        ]
+    },
+    {
+        "label": 175,
+        "coordinates": [
+            150,
+            450
+        ]
+    },
+    {
+        "label": 176,
+        "coordinates": [
+            200,
+            450
+        ]
+    },
+    {
+        "label": 177,
+        "coordinates": [
+            250,
+            450
+        ]
+    },
+    {
+        "label": 178,
+        "coordinates": [
+            300,
+            450
+        ]
+    },
+    {
+        "label": 179,
+        "coordinates": [
+            350,
+            450
+        ]
+    },
+    {
+        "label": 180,
+        "coordinates": [
+            400,
+            450
+        ]
+    },
+    {
+        "label": 181,
+        "coordinates": [
+            450,
+            450
+        ]
+    },
+    {
+        "label": 182,
+        "coordinates": [
+            500,
+            450
+        ]
+    },
+    {
+        "label": 183,
+        "coordinates": [
+            550,
+            450
+        ]
+    },
+    {
+        "label": 184,
+        "coordinates": [
+            600,
+            450
+        ]
+    },
+    {
+        "label": 185,
+        "coordinates": [
+            650,
+            450
+        ]
+    },
+    {
+        "label": 186,
+        "coordinates": [
+            700,
+            450
+        ]
+    },
+    {
+        "label": 187,
+        "coordinates": [
+            750,
+            450
+        ]
+    },
+    {
+        "label": 188,
+        "coordinates": [
+            800,
+            450
+        ]
+    },
+    {
+        "label": 189,
+        "coordinates": [
+            850,
+            450
+        ]
+    },
+    {
+        "label": 190,
+        "coordinates": [
+            900,
+            450
+        ]
+    },
+    {
+        "label": 191,
+        "coordinates": [
+            0,
+            500
+        ]
+    },
+    {
+        "label": 192,
+        "coordinates": [
+            50,
+            500
+        ]
+    },
+    {
+        "label": 193,
+        "coordinates": [
+            100,
+            500
+        ]
+    },
+    {
+        "label": 194,
+        "coordinates": [
+            150,
+            500
+        ]
+    },
+    {
+        "label": 195,
+        "coordinates": [
+            200,
+            500
+        ]
+    },
+    {
+        "label": 196,
+        "coordinates": [
+            250,
+            500
+        ]
+    },
+    {
+        "label": 197,
+        "coordinates": [
+            300,
+            500
+        ]
+    },
+    {
+        "label": 198,
+        "coordinates": [
+            350,
+            500
+        ]
+    },
+    {
+        "label": 199,
+        "coordinates": [
+            400,
+            500
+        ]
+    },
+    {
+        "label": 200,
+        "coordinates": [
+            450,
+            500
+        ]
+    },
+    {
+        "label": 201,
+        "coordinates": [
+            500,
+            500
+        ]
+    },
+    {
+        "label": 202,
+        "coordinates": [
+            550,
+            500
+        ]
+    },
+    {
+        "label": 203,
+        "coordinates": [
+            600,
+            500
+        ]
+    },
+    {
+        "label": 204,
+        "coordinates": [
+            650,
+            500
+        ]
+    },
+    {
+        "label": 205,
+        "coordinates": [
+            700,
+            500
+        ]
+    },
+    {
+        "label": 206,
+        "coordinates": [
+            750,
+            500
+        ]
+    },
+    {
+        "label": 207,
+        "coordinates": [
+            800,
+            500
+        ]
+    },
+    {
+        "label": 208,
+        "coordinates": [
+            850,
+            500
+        ]
+    },
+    {
+        "label": 209,
+        "coordinates": [
+            900,
+            500
+        ]
+    },
+    {
+        "label": 210,
+        "coordinates": [
+            0,
+            550
+        ]
+    },
+    {
+        "label": 211,
+        "coordinates": [
+            50,
+            550
+        ]
+    },
+    {
+        "label": 212,
+        "coordinates": [
+            100,
+            550
+        ]
+    },
+    {
+        "label": 213,
+        "coordinates": [
+            150,
+            550
+        ]
+    },
+    {
+        "label": 214,
+        "coordinates": [
+            200,
+            550
+        ]
+    },
+    {
+        "label": 215,
+        "coordinates": [
+            250,
+            550
+        ]
+    },
+    {
+        "label": 216,
+        "coordinates": [
+            300,
+            550
+        ]
+    },
+    {
+        "label": 217,
+        "coordinates": [
+            350,
+            550
+        ]
+    },
+    {
+        "label": 218,
+        "coordinates": [
+            400,
+            550
+        ]
+    },
+    {
+        "label": 219,
+        "coordinates": [
+            450,
+            550
+        ]
+    },
+    {
+        "label": 220,
+        "coordinates": [
+            500,
+            550
+        ]
+    },
+    {
+        "label": 221,
+        "coordinates": [
+            550,
+            550
+        ]
+    },
+    {
+        "label": 222,
+        "coordinates": [
+            600,
+            550
+        ]
+    },
+    {
+        "label": 223,
+        "coordinates": [
+            650,
+            550
+        ]
+    },
+    {
+        "label": 224,
+        "coordinates": [
+            700,
+            550
+        ]
+    },
+    {
+        "label": 225,
+        "coordinates": [
+            750,
+            550
+        ]
+    },
+    {
+        "label": 226,
+        "coordinates": [
+            800,
+            550
+        ]
+    },
+    {
+        "label": 227,
+        "coordinates": [
+            850,
+            550
+        ]
+    },
+    {
+        "label": 228,
+        "coordinates": [
+            900,
+            550
+        ]
+    },
+    {
+        "label": 229,
+        "coordinates": [
+            0,
+            600
+        ]
+    },
+    {
+        "label": 230,
+        "coordinates": [
+            50,
+            600
+        ]
+    },
+    {
+        "label": 231,
+        "coordinates": [
+            100,
+            600
+        ]
+    },
+    {
+        "label": 232,
+        "coordinates": [
+            150,
+            600
+        ]
+    },
+    {
+        "label": 233,
+        "coordinates": [
+            200,
+            600
+        ]
+    },
+    {
+        "label": 234,
+        "coordinates": [
+            250,
+            600
+        ]
+    },
+    {
+        "label": 235,
+        "coordinates": [
+            300,
+            600
+        ]
+    },
+    {
+        "label": 236,
+        "coordinates": [
+            350,
+            600
+        ]
+    },
+    {
+        "label": 237,
+        "coordinates": [
+            400,
+            600
+        ]
+    },
+    {
+        "label": 238,
+        "coordinates": [
+            450,
+            600
+        ]
+    },
+    {
+        "label": 239,
+        "coordinates": [
+            500,
+            600
+        ]
+    },
+    {
+        "label": 240,
+        "coordinates": [
+            550,
+            600
+        ]
+    },
+    {
+        "label": 241,
+        "coordinates": [
+            600,
+            600
+        ]
+    },
+    {
+        "label": 242,
+        "coordinates": [
+            650,
+            600
+        ]
+    },
+    {
+        "label": 243,
+        "coordinates": [
+            700,
+            600
+        ]
+    },
+    {
+        "label": 244,
+        "coordinates": [
+            750,
+            600
+        ]
+    },
+    {
+        "label": 245,
+        "coordinates": [
+            800,
+            600
+        ]
+    },
+    {
+        "label": 246,
+        "coordinates": [
+            850,
+            600
+        ]
+    },
+    {
+        "label": 247,
+        "coordinates": [
+            900,
+            600
+        ]
+    },
+    {
+        "label": 248,
+        "coordinates": [
+            0,
+            650
+        ]
+    },
+    {
+        "label": 249,
+        "coordinates": [
+            50,
+            650
+        ]
+    },
+    {
+        "label": 250,
+        "coordinates": [
+            100,
+            650
+        ]
+    },
+    {
+        "label": 251,
+        "coordinates": [
+            150,
+            650
+        ]
+    },
+    {
+        "label": 252,
+        "coordinates": [
+            200,
+            650
+        ]
+    },
+    {
+        "label": 253,
+        "coordinates": [
+            250,
+            650
+        ]
+    },
+    {
+        "label": 254,
+        "coordinates": [
+            300,
+            650
+        ]
+    },
+    {
+        "label": 255,
+        "coordinates": [
+            350,
+            650
+        ]
+    },
+    {
+        "label": 256,
+        "coordinates": [
+            400,
+            650
+        ]
+    },
+    {
+        "label": 257,
+        "coordinates": [
+            450,
+            650
+        ]
+    },
+    {
+        "label": 258,
+        "coordinates": [
+            500,
+            650
+        ]
+    },
+    {
+        "label": 259,
+        "coordinates": [
+            550,
+            650
+        ]
+    },
+    {
+        "label": 260,
+        "coordinates": [
+            600,
+            650
+        ]
+    },
+    {
+        "label": 261,
+        "coordinates": [
+            650,
+            650
+        ]
+    },
+    {
+        "label": 262,
+        "coordinates": [
+            700,
+            650
+        ]
+    },
+    {
+        "label": 263,
+        "coordinates": [
+            750,
+            650
+        ]
+    },
+    {
+        "label": 264,
+        "coordinates": [
+            800,
+            650
+        ]
+    },
+    {
+        "label": 265,
+        "coordinates": [
+            850,
+            650
+        ]
+    },
+    {
+        "label": 266,
+        "coordinates": [
+            900,
+            650
+        ]
+    },
+    {
+        "label": 267,
+        "coordinates": [
+            0,
+            700
+        ]
+    },
+    {
+        "label": 268,
+        "coordinates": [
+            50,
+            700
+        ]
+    },
+    {
+        "label": 269,
+        "coordinates": [
+            100,
+            700
+        ]
+    },
+    {
+        "label": 270,
+        "coordinates": [
+            150,
+            700
+        ]
+    },
+    {
+        "label": 271,
+        "coordinates": [
+            200,
+            700
+        ]
+    },
+    {
+        "label": 272,
+        "coordinates": [
+            250,
+            700
+        ]
+    },
+    {
+        "label": 273,
+        "coordinates": [
+            300,
+            700
+        ]
+    },
+    {
+        "label": 274,
+        "coordinates": [
+            350,
+            700
+        ]
+    },
+    {
+        "label": 275,
+        "coordinates": [
+            400,
+            700
+        ]
+    },
+    {
+        "label": 276,
+        "coordinates": [
+            450,
+            700
+        ]
+    },
+    {
+        "label": 277,
+        "coordinates": [
+            500,
+            700
+        ]
+    },
+    {
+        "label": 278,
+        "coordinates": [
+            550,
+            700
+        ]
+    },
+    {
+        "label": 279,
+        "coordinates": [
+            600,
+            700
+        ]
+    },
+    {
+        "label": 280,
+        "coordinates": [
+            650,
+            700
+        ]
+    },
+    {
+        "label": 281,
+        "coordinates": [
+            700,
+            700
+        ]
+    },
+    {
+        "label": 282,
+        "coordinates": [
+            750,
+            700
+        ]
+    },
+    {
+        "label": 283,
+        "coordinates": [
+            800,
+            700
+        ]
+    },
+    {
+        "label": 284,
+        "coordinates": [
+            850,
+            700
+        ]
+    },
+    {
+        "label": 285,
+        "coordinates": [
+            900,
+            700
+        ]
+    },
+    {
+        "label": 286,
+        "coordinates": [
+            0,
+            750
+        ]
+    },
+    {
+        "label": 287,
+        "coordinates": [
+            50,
+            750
+        ]
+    },
+    {
+        "label": 288,
+        "coordinates": [
+            100,
+            750
+        ]
+    },
+    {
+        "label": 289,
+        "coordinates": [
+            150,
+            750
+        ]
+    },
+    {
+        "label": 290,
+        "coordinates": [
+            200,
+            750
+        ]
+    },
+    {
+        "label": 291,
+        "coordinates": [
+            250,
+            750
+        ]
+    },
+    {
+        "label": 292,
+        "coordinates": [
+            300,
+            750
+        ]
+    },
+    {
+        "label": 293,
+        "coordinates": [
+            350,
+            750
+        ]
+    },
+    {
+        "label": 294,
+        "coordinates": [
+            400,
+            750
+        ]
+    },
+    {
+        "label": 295,
+        "coordinates": [
+            450,
+            750
+        ]
+    },
+    {
+        "label": 296,
+        "coordinates": [
+            500,
+            750
+        ]
+    },
+    {
+        "label": 297,
+        "coordinates": [
+            550,
+            750
+        ]
+    },
+    {
+        "label": 298,
+        "coordinates": [
+            600,
+            750
+        ]
+    },
+    {
+        "label": 299,
+        "coordinates": [
+            650,
+            750
+        ]
+    },
+    {
+        "label": 300,
+        "coordinates": [
+            700,
+            750
+        ]
+    },
+    {
+        "label": 301,
+        "coordinates": [
+            750,
+            750
+        ]
+    },
+    {
+        "label": 302,
+        "coordinates": [
+            800,
+            750
+        ]
+    },
+    {
+        "label": 303,
+        "coordinates": [
+            850,
+            750
+        ]
+    },
+    {
+        "label": 304,
+        "coordinates": [
+            900,
+            750
+        ]
+    }
+]
