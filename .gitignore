@@ -156,7 +156,10 @@ cython_debug/
 *.iml
 *.ipr
 .idea/
+# YOLO model files (large files that shouldn't be in git)
+*.pt
 yolov8l.pt
+resources/models/*.pt
 backup
 
 # VSCode
