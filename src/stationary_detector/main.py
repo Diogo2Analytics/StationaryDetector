@@ -18,6 +18,49 @@ from hachoir.parser import createParser
 from hachoir.metadata import extractMetadata
 
 
+# =============================================================================
+# CONFIGURATION PARAMETERS - Easy to modify
+# =============================================================================
+
+# Video and Processing Settings
+DEFAULT_VIDEO_FILE = "resources/videos/2.mp4"
+FORCE_FRAME = 4  # Frames per second to process
+FRAME_INTERVAL = 10  # Display refresh interval
+DEBUG_MODE = False
+GPS_COORDINATES = True
+
+# Detection Settings
+CONFIDENCE_THRESHOLD = 0.20  # YOLO confidence threshold
+MOVEMENT_THRESHOLD = 0.18  # Movement detection threshold (0-1)
+IMAGE_SIZE = 1920  # YOLO processing image size
+
+# Resource Paths
+SCENARIO_FILE = "resources/camera_parameters/scenario6_campo_ourique_secundaria.json"
+SATELLITE_IMAGE = "resources/satellite_images/campo_ourique_portao_secundaria.jpeg"
+RESULTS_DIR = "results"
+ANALYTICS_FILE = "analytics.json"
+
+# Dashboard Settings
+PANEL_WIDTH = 480  # Smaller panels to fit more views
+PANEL_HEIGHT = 360
+DASHBOARD_BORDER = 2
+
+# MOG2 Background Subtractor Settings
+MOG_HISTORY = 300
+MOG_VAR_THRESHOLD = 8
+MOG_DETECT_SHADOWS = True
+
+# GPS Corner Coordinates (top-left, bottom-left, bottom-right, top-right)
+GPS_CORNER_COORDINATES = [
+    [38.7174781, -9.1702299],  # top-left
+    [38.7171197, -9.1702293],  # bottom-left
+    [38.7171223, -9.1696365],  # bottom-right
+    [38.7174791, -9.1696378]   # top-right
+]
+
+# =============================================================================
+
+
 # Global dictionary to track person IDs and their stationary state
 id_bboxes = {}
 
@@ -135,7 +178,7 @@ def calculate_movement_mog(frame, fgmask, detect):
     total_pixels = fgthres_roi.size
     white_pixel_percentage = white_pixel_count / total_pixels
     
-    is_moving = white_pixel_percentage > 0.18
+    is_moving = white_pixel_percentage > MOVEMENT_THRESHOLD
     print(f"ID {detection_id} - Moving: {is_moving} ({white_pixel_percentage:.2f})")
     
     return is_moving, white_pixel_percentage
@@ -210,19 +253,20 @@ def set_background(background, image_frame):
 
 
 def debug_mechanism(debug_mode, frame_interval, iter_flag):
-    """Handle keyboard input for debugging."""
+    """Handle keyboard input for debugging and program control."""
     if debug_mode:
-        key = cv2.waitKey(0)
-        if key == ord(' '):
+        key = cv2.waitKey(0) & 0xFF
+        if key == ord(' '):  # Space to continue in debug mode
             return iter_flag
-        if key == ord('q'):
+        elif key == ord('q') or key == ord('Q') or key == 27:  # 'q', 'Q' or ESC to quit
+            print("\n=== Program stopped by user (q pressed) ===")
             cv2.destroyAllWindows()
             return False
+    else:
+        # This function is now only called in debug mode
+        # Main loop handles key detection directly
+        pass
     
-    key = cv2.waitKey(frame_interval) & 0xFF
-    if key == ord('q'):
-        cv2.destroyAllWindows()
-        return False
     return iter_flag
 
 
@@ -278,61 +322,80 @@ def create_terminal_overlay(width, height, log_messages):
 
 
 def create_dashboard(original_frame, detection_frame, satellite_img, foreground_mask, frame_count, log_messages=None):
-    """Create a 2x2 dashboard showing all views."""
+    """Create a 3x2 dashboard showing all views including shadow/movement detection."""
     if log_messages is None:
         log_messages = []
     
     # Define panel dimensions
-    panel_width = 640
-    panel_height = 480
-    border = 2
+    panel_width = PANEL_WIDTH
+    panel_height = PANEL_HEIGHT
+    border = DASHBOARD_BORDER
     
-    # Create dashboard canvas
-    dashboard_width = (panel_width * 2) + (border * 3)
+    # Create dashboard canvas (3 columns, 2 rows)
+    dashboard_width = (panel_width * 3) + (border * 4)
     dashboard_height = (panel_height * 2) + (border * 3)
     dashboard = np.zeros((dashboard_height, dashboard_width, 3), dtype=np.uint8)
     
     # Resize all panels to standard size
-    # Top-left: Original footage
+    # Top row: Original footage, Detection view, Movement/Shadow mask
     original_resized = cv2.resize(original_frame, (panel_width, panel_height))
-    
-    # Top-right: Detection view
     detection_resized = cv2.resize(detection_frame, (panel_width, panel_height))
     
-    # Bottom-left: Satellite view
-    satellite_resized = cv2.resize(satellite_img, (panel_width, panel_height))
+    # Convert foreground mask to 3-channel for display
+    foreground_colored = cv2.applyColorMap(foreground_mask, cv2.COLORMAP_HOT)
+    movement_resized = cv2.resize(foreground_colored, (panel_width, panel_height))
     
-    # Bottom-right: Terminal log
+    # Bottom row: Satellite view, Terminal log, and a combined analysis view
+    satellite_resized = cv2.resize(satellite_img, (panel_width, panel_height))
     terminal_panel = create_terminal_overlay(panel_width, panel_height, log_messages)
+    
+    # Create a combined analysis view (movement threshold visualization)
+    fgthres = cv2.threshold(foreground_mask.copy(), 200, 255, cv2.THRESH_BINARY)[1]
+    analysis_colored = cv2.applyColorMap(fgthres, cv2.COLORMAP_VIRIDIS)
+    analysis_resized = cv2.resize(analysis_colored, (panel_width, panel_height))
     
     # Add labels to each panel
     def add_panel_label(img, label, color=(255, 255, 255)):
-        cv2.rectangle(img, (0, 0), (panel_width, 30), (0, 0, 0), -1)
-        cv2.putText(img, label, (10, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
+        cv2.rectangle(img, (0, 0), (panel_width, 25), (0, 0, 0), -1)
+        cv2.putText(img, label, (8, 18), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
     
     add_panel_label(original_resized, "ORIGINAL FOOTAGE")
     add_panel_label(detection_resized, "DETECTION VIEW")
+    add_panel_label(movement_resized, "MOVEMENT/SHADOW MASK", (255, 165, 0))  # Orange
     add_panel_label(satellite_resized, "SATELLITE VIEW")
     add_panel_label(terminal_panel, "SYSTEM LOG", (0, 255, 0))
+    add_panel_label(analysis_resized, "THRESHOLD ANALYSIS", (255, 255, 0))  # Yellow
     
-    # Place panels in dashboard
+    # Place panels in dashboard (3x2 layout)
+    # Top row
     # Top-left: Original footage
     dashboard[border:border+panel_height, border:border+panel_width] = original_resized
     
-    # Top-right: Detection view  
+    # Top-center: Detection view  
     dashboard[border:border+panel_height, border*2+panel_width:border*2+panel_width*2] = detection_resized
     
+    # Top-right: Movement/Shadow mask
+    dashboard[border:border+panel_height, border*3+panel_width*2:border*3+panel_width*3] = movement_resized
+    
+    # Bottom row
     # Bottom-left: Satellite view
     dashboard[border*2+panel_height:border*2+panel_height*2, border:border+panel_width] = satellite_resized
     
-    # Bottom-right: Terminal log
+    # Bottom-center: Terminal log
     dashboard[border*2+panel_height:border*2+panel_height*2, border*2+panel_width:border*2+panel_width*2] = terminal_panel
+    
+    # Bottom-right: Threshold analysis
+    dashboard[border*2+panel_height:border*2+panel_height*2, border*3+panel_width*2:border*3+panel_width*3] = analysis_resized
     
     # Add main title and frame counter
     title_area_height = 50
     title_dashboard = np.zeros((title_area_height, dashboard_width, 3), dtype=np.uint8)
     cv2.putText(title_dashboard, f"STATIONARY DETECTOR DASHBOARD - Frame: {frame_count}", 
                 (20, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+    
+    # Add instruction text
+    cv2.putText(title_dashboard, "Press 'q' to quit", 
+                (dashboard_width - 150, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 200, 200), 1)
     
     # Combine title with dashboard
     final_dashboard = np.vstack([title_dashboard, dashboard])
@@ -342,16 +405,20 @@ def create_dashboard(original_frame, detection_frame, satellite_img, foreground_
 
 def main(file_to_process=None):
     """Main detection loop."""
-    print("Running Stationary Detector... Press 'q' to quit")
+    print("=" * 60)
+    print("🎯 STATIONARY DETECTOR DASHBOARD")
+    print("=" * 60)
+    print("📹 Starting video processing...")
+    print("⌨️  CONTROLS:")
+    print("   • Press 'q' or 'Q' to quit")
+    print("   • Press 'ESC' to quit")
+    print("   • Focus the video window first!")
+    print("=" * 60)
     
-    # Configuration
+    # Runtime variables
     ITER = True
     SET_BACKGROUND = None
-    FRAME_INTERVAL = 10
-    DEBUG_MODE = False
     CURRENT_FRAME = 0
-    FORCE_FRAME = 4  # 4 frames per second
-    GPS_COORDINATES = True
     
     global id_bboxes
     id_bboxes = {}
@@ -363,22 +430,17 @@ def main(file_to_process=None):
         "Starting detection loop..."
     ]
     
-    # Resource paths
-    scenario_field = "resources/camera_parameters/scenario6_campo_ourique_secundaria.json"
-    satellite_source = "resources/satellite_images/campo_ourique_portao_secundaria.jpeg"
-    bev_width = 600
-    bev_height = 600
-    
-    # Analytics file
-    results_dir = Path("results")
+    # Analytics file setup
+    results_dir = Path(RESULTS_DIR)
     results_dir.mkdir(exist_ok=True)
-    analytics_file = results_dir / "analytics.json"
+    analytics_file = results_dir / ANALYTICS_FILE
     
     print(f"Configuration: FORCE_FRAME={FORCE_FRAME}, GPS_COORDINATES={GPS_COORDINATES}")
+    print(f"Movement Threshold: {MOVEMENT_THRESHOLD}, Confidence: {CONFIDENCE_THRESHOLD}")
     
     # Initialize video capture
     if file_to_process is None:
-        video_file = "resources/videos/2.mp4"
+        video_file = DEFAULT_VIDEO_FILE
     else:
         video_file = file_to_process
     
@@ -394,15 +456,19 @@ def main(file_to_process=None):
     model_object_detection = YOLO("yolov8l.pt")
     
     # Initialize MOG background subtractor
-    mog = cv2.createBackgroundSubtractorMOG2(history=300, varThreshold=8, detectShadows=True)
+    mog = cv2.createBackgroundSubtractorMOG2(
+        history=MOG_HISTORY, 
+        varThreshold=MOG_VAR_THRESHOLD, 
+        detectShadows=MOG_DETECT_SHADOWS
+    )
     
     print("Starting detection loop...")
     
     while ITER:
         # Load fresh satellite image each frame
-        satellite_img = cv2.imread(satellite_source)
+        satellite_img = cv2.imread(SATELLITE_IMAGE)
         if satellite_img is None:
-            print(f"Error: Could not load satellite image from {satellite_source}")
+            print(f"Error: Could not load satellite image from {SATELLITE_IMAGE}")
             break
             
         satellite_width = satellite_img.shape[1]
@@ -432,8 +498,8 @@ def main(file_to_process=None):
             source=frame, 
             persist=True, 
             tracker="botsort.yaml", 
-            imgsz=1920, 
-            conf=0.20, 
+            imgsz=IMAGE_SIZE, 
+            conf=CONFIDENCE_THRESHOLD, 
             classes=0,  # Person class only
             verbose=False
         )[0]
@@ -473,17 +539,12 @@ def main(file_to_process=None):
             
             # Camera calibration and BEV projection
             try:
-                homography_matrix = calibrate_cam(frame, scenario_field)
+                homography_matrix = calibrate_cam(frame, SCENARIO_FILE)
                 satellite_img, centroid = display_bev(satellite_img, detect.boxes.xyxy.tolist(), homography_matrix)
                 
                 # GPS coordinates
                 if GPS_COORDINATES:
-                    corner_coordinates = np.array([
-                        [38.7174781, -9.1702299],  # top-left
-                        [38.7171197, -9.1702293],  # bottom-left
-                        [38.7171223, -9.1696365],  # bottom-right
-                        [38.7174791, -9.1696378]   # top-right
-                    ])
+                    corner_coordinates = np.array(GPS_CORNER_COORDINATES)
                     
                     x, y = centroid[0], centroid[1]
                     lon, lat = interpolate_gps((x, y), satellite_width, satellite_height, corner_coordinates)
@@ -507,12 +568,29 @@ def main(file_to_process=None):
         dashboard = create_dashboard(frame, still_image, satellite_img, fgmask, CURRENT_FRAME, log_messages)
         cv2.imshow('Stationary Detector Dashboard', dashboard)
         
-        # Handle user input
-        ITER = debug_mechanism(DEBUG_MODE, FRAME_INTERVAL, ITER)
+        # Handle user input - check for 'q' key immediately after showing frame
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('q') or key == ord('Q') or key == 27:  # 'q', 'Q' or ESC to quit
+            print("\n=== Program stopped by user (q pressed) ===")
+            cv2.destroyAllWindows()
+            ITER = False
+            break  # Exit the loop immediately
+        elif DEBUG_MODE:
+            ITER = debug_mechanism(DEBUG_MODE, FRAME_INTERVAL, ITER)
+            if not ITER:  # If debug mechanism returned False, break the loop
+                break
     
     print("Detection completed!")
-    video_cap.release()
-    cv2.destroyAllWindows()
+    
+    # Cleanup resources
+    try:
+        video_cap.release()
+        cv2.destroyAllWindows()
+        cv2.waitKey(1)  # Allow time for windows to close
+    except:
+        pass
+    
+    print("All resources cleaned up. Program ended.")
 
 
 if __name__ == "__main__":
