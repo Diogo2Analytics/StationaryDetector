@@ -39,8 +39,8 @@ IMAGE_SIZE = 1920  # YOLO processing image size
 GEOJSON_MIN_STATIONARY_FRAMES = 6  # Minimum consecutive stationary frames before creating GeoJSON entry
 
 # Resource Paths
-SCENARIO_FILE = "resources/camera_parameters/scenario6_campo_ourique_secundaria.json"
-SATELLITE_IMAGE = "resources/satellite_images/campo_ourique_portao_secundaria.jpeg"
+SCENARIO_FILE = "resources/camera_parameters/R_Andrade_Corvo.json"
+SATELLITE_IMAGE = "resources/satellite_images/R. Andrade Corvo.png"
 RESULTS_DIR = "results"
 ANALYTICS_FILE = "analytics.json"
 GEOJSON_FILE = "geojson.json"
