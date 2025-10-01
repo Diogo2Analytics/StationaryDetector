@@ -7,11 +7,11 @@ A computer vision system for analyzing pedestrian behavior and dwell patterns in
 
 ## Background
 
-This project emerged from urban analytics work conducted for BipZip Lisbon and EDP Move in Braga. The methodology focuses on analyzing mixed-use spaces where cars and pedestrians coexist - particularly around schools and transit areas - to identify where people congregate and spend the most time.
+This project emerged from urban analytics work conducted for BipZip Lisbon and EDP Move in Braga. The methodology focuses on analyzing mixed-use spaces where cars and pedestrians coexist - particularly around schools and transit areas - to identify where people congregate and spend the most time. There is also a need that due to RGPD we cannot store any video footage, only metadata values
 
-The core research question was: **where do people spend more time in public spaces?** Understanding these patterns enables evidence-based urban interventions, such as converting parking spaces to seating areas, installing shade structures for parents waiting for children, or redesigning pedestrian infrastructure based on actual usage patterns.
+The core research question was: **How to track where a public space user uses a specifc space and how to track its permanance time** Understanding these patterns enables evidence-based urban interventions, such as converting parking spaces to seating areas, installing shade structures for parents waiting for children, or redesigning pedestrian infrastructure based on actual usage patterns.
 
-This repository contains the computer vision and behavioral analysis components. Environmental monitoring (air quality, humidity, temperature) was conducted separately and is not included here.
+This repository contains the computer vision and analysis components. Environmental monitoring (air quality, humidity, temperature) was conducted separately and is not included here.
 
 <div align="center">
   <img src="images/workflow-diagram.png" alt="Analysis Workflow" width="600"/>
@@ -22,24 +22,64 @@ This repository contains the computer vision and behavioral analysis components.
 
 The system addresses a fundamental challenge in urban analytics: **how to automatically identify when unique individuals are stationary and accurately measure the duration each person spends in specific locations.**
 
-The solution combines multiple computer vision techniques:
+Due to GDPR constraints, we cannot store video footage - only metadata information. For demonstrations, we use pre-recorded content, but the production system operates on live streams without retention.
 
-**Person Detection & Tracking**: Uses YOLOv8 for robust person detection with persistent ID tracking across video frames, maintaining individual identity even through temporary occlusions.
+The analysis follows a sequential 6-step process:
 
-**Movement Classification**: Employs MOG2 background subtraction to distinguish between moving and stationary behavior, analyzing pixel-level changes within each person's bounding box to determine their activity state.
+### Step 1: Initial Calibration Setup
+We obtain a satellite view of the analysis location and map the corners of the camera view to real-world GPS coordinates for spatial interpolation.
 
-**Spatial Mapping**: Implements homography-based camera calibration to transform image coordinates into real-world GPS coordinates, enabling precise geographic localization of stationary events.
+<div align="center">
+  <img src="images/step1-calibration.png" alt="Camera Calibration Setup" width="600"/>
+  <p><em>GPS corner mapping for camera-to-world coordinate transformation</em></p>
+</div>
 
-**Temporal Analysis**: Tracks duration metrics per individual, accumulating time spent in stationary states and exporting structured analytics for further analysis.
+### Step 2: Background Reference Capture  
+The system ingests the first frame where no people are visible to establish a clean background reference for movement detection.
 
-## System Capabilities
+<div align="center">
+  <img src="images/step2-background.png" alt="Background Reference" width="600"/>
+  <p><em>Clean background frame used for MOG2 background subtraction</em></p>
+</div>
 
-- Real-time video processing with multi-panel visualization dashboard
-- Persistent person tracking with unique ID assignment
-- Movement vs. stationary state classification with configurable sensitivity
-- GPS coordinate mapping through camera calibration matrices  
-- Structured data export showing temporal patterns per individual
-- Configurable processing parameters for different deployment scenarios
+### Step 3: Person Detection & Tracking
+**YOLOv8 Person Detection**: Identifies individuals in pixel coordinates using a model that distinguishes between different people. If someone is occluded for extended periods, they may be counted as a new person upon reappearance.
+
+<div align="center">
+  <img src="images/step3-detection.png" alt="Person Detection" width="600"/>
+  <p><em>YOLO bounding boxes with persistent ID tracking</em></p>
+</div>
+
+### Step 4: Movement Classification
+**MOG2 Background Subtraction**: Analyzes pixel-level changes within each person's bounding box. If variation exceeds 20% threshold, the person is classified as "moving"; otherwise "stationary". Frame rate is used to calculate time duration in seconds.
+
+<div align="center">
+  <img src="images/step4-movement.png" alt="Movement Analysis" width="600"/>
+  <p><em>Background subtraction showing motion areas in white</em></p>
+</div>
+
+### Step 5: Spatial & Temporal Mapping  
+**Homography-based Coordinate Conversion**: Transforms pixel coordinates to real-world GPS positions. **Duration Tracking**: Accumulates time spent in stationary states per individual, maintaining historical data for pattern analysis.
+
+<div align="center">
+  <img src="images/step5-mapping.png" alt="GPS Mapping" width="600"/>
+  <p><em>GPS coordinate transformation and temporal tracking</em></p>
+</div>
+
+### Step 6: Data Export & Visualization
+**GeoJSON Generation**: Compiles stationary events by person ID, averaging locations where individuals spent time. Multiple stationary locations per person are tracked separately. **Heatmap Visualization**: Creates geographic heatmaps showing all accumulated dwell pattern data.
+
+<div align="center">
+  <img src="images/step6-output.png" alt="Data Export" width="600"/>
+  <p><em>Final GeoJSON output and heatmap visualization</em></p>
+</div>
+
+**Technical Implementation:**
+- **Person Detection & Tracking**: YOLOv8 for detection with persistent ID tracking across video frames
+- **Movement Classification**: MOG2 background subtraction analyzing pixel-level changes within bounding boxes  
+- **Spatial Mapping**: Homography-based camera calibration for GPS coordinate conversion
+- **Temporal Analysis**: Frame-based duration tracking with stationary event validation (6+ consecutive frames)
+
 
 ## Setup
 
@@ -74,41 +114,17 @@ source .venv/bin/activate
 # Run with the included demo video
 python src/stationary_detector/main.py
 
-# Or run with your own video
-python src/stationary_detector/main.py /path/to/your/video.mp4
-```
-
 Press 'q' to quit the application. Make sure to click on the video window first so it can capture the keypress.
 
-## Project Structure
-
 ```
-StationaryDetector/
-├── src/
-│   └── stationary_detector/
-│       ├── __init__.py           # Package initialization
-│       └── main.py               # Main application & dashboard
-├── resources/
-│   ├── camera_parameters/        # Camera calibration files
-│   ├── grid/                     # Spatial grid definitions
-│   ├── satellite_images/         # Aerial/satellite imagery
-│   └── videos/                   # Sample video files
-├── results/                      # Analysis outputs
-│   └── analytics.json            # Time-based analytics data
-├── pyproject.toml                # Poetry dependencies & config
-└── README.md                     # This file
-```
-
 ## Configuration
-
-You can modify the key parameters at the top of `src/stationary_detector/main.py`:
 
 ```python
 # Video & Processing Settings
 DEFAULT_VIDEO_FILE = "resources/videos/2.mp4"    # Input video path
-FORCE_FRAME = 4                                  # Processing frame rate
+FORCE_FRAME = 4                                  # Processing frame rate, wait 4 frames before analysing
 CONFIDENCE_THRESHOLD = 0.20                      # YOLO detection confidence
-MOVEMENT_THRESHOLD = 0.18                        # Motion detection sensitivity
+MOVEMENT_THRESHOLD = 0.18                        # Motion detection confidence
 
 # Resource Paths  
 SCENARIO_FILE = "resources/camera_parameters/..."     # Camera calibration
@@ -140,29 +156,12 @@ The application provides a comprehensive real-time visualization through a 3×2 
 
 *Dashboard panels showing different analysis views of the same scene*
 
-## Dependencies
-
-The system builds on several key libraries:
-
-**Computer Vision & Machine Learning:**
-- OpenCV (`opencv-python`) for core computer vision operations and video processing
-- PyTorch (`torch`, `torchvision`) providing the deep learning framework
-- Ultralytics (`ultralytics`) for YOLOv8 object detection implementation
-- Deep Sort (`deep-sort-realtime`) enabling robust multi-object tracking
-
-**Scientific Computing:**
-- NumPy (`numpy`) for numerical operations and array processing
-- SciPy (`scipy`) for scientific computing, particularly GPS coordinate interpolation
-- Hachoir (`hachoir`) for video metadata extraction and analysis
-
-**Additional utilities:** JSON handling, datetime operations, and pathlib for file system management.
-
-Complete dependency specifications with pinned versions are available in `pyproject.toml`.
-
 ## Analytics Output
 
-The system generates structured analytics data saved to `results/analytics.json`, containing stationary duration metrics per individual:
+The system generates multiple output formats for comprehensive analysis:
 
+### 1. Simple Analytics (`analytics.json`)
+Basic duration metrics per individual:
 ```json
 {
   "person_id_1": 45.2,    // Total stationary time in seconds
@@ -170,6 +169,35 @@ The system generates structured analytics data saved to `results/analytics.json`
   "person_id_3": 67.4     // Accumulated across entire analysis period
 }
 ```
+
+### 2. Geographic Data (`geojson.json`)
+GeoJSON format with GPS coordinates for mapping applications:
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-9.16995835877193, 38.717420738782415]
+      },
+      "properties": {
+        "row_id": 0,
+        "tempo_de_permanencia": 1.75,
+        "id_person": 126,
+        "timestamp": "2024-02-17 10:16:15.900000",
+        "unique_identifier": 5260585897646893104
+      }
+    }
+  ]
+}
+```
+
+**Key Features:**
+- **Stationary Validation**: Only records events after 6+ consecutive stationary frames
+- **GPS Mapping**: Real-world coordinates for geographic analysis  
+- **Temporal Tracking**: Precise timestamps for behavioral pattern analysis
 
 **Real-time Console Output:**
 During processing, the system provides live feedback including:
