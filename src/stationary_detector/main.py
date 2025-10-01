@@ -10,6 +10,7 @@ import json
 import math
 import os
 import time
+import csv
 from pathlib import Path
 from datetime import datetime, timedelta
 from ultralytics import YOLO
@@ -34,11 +35,18 @@ CONFIDENCE_THRESHOLD = 0.20  # YOLO confidence threshold
 MOVEMENT_THRESHOLD = 0.18  # Movement detection threshold (0-1)
 IMAGE_SIZE = 1920  # YOLO processing image size
 
+# GeoJSON Generation Settings
+GEOJSON_MIN_STATIONARY_FRAMES = 6  # Minimum consecutive stationary frames before creating GeoJSON entry
+
 # Resource Paths
-SCENARIO_FILE = "resources/camera_parameters/scenario6_campo_ourique_secundaria.json"
-SATELLITE_IMAGE = "resources/satellite_images/campo_ourique_portao_secundaria.jpeg"
+SCENARIO_FILE = "resources/camera_parameters/R_Andrade_Corvo.json"
+SATELLITE_IMAGE = "resources/satellite_images/R. Andrade Corvo.png"
 RESULTS_DIR = "results"
 ANALYTICS_FILE = "analytics.json"
+GEOJSON_FILE = "geojson.json"
+DETAILED_CSV_FILE = "detailed_results.csv"
+
+
 
 # Dashboard Settings
 PANEL_WIDTH = 480  # Smaller panels to fit more views
@@ -61,21 +69,30 @@ GPS_CORNER_COORDINATES = [
 # =============================================================================
 
 
-# Global dictionary to track person IDs and their stationary state
+# Global dictionaries to track person IDs and their stationary state
 id_bboxes = {}
+stationary_frame_counts = {}  # Track consecutive stationary frames per person
+csv_data_buffer = []  # Buffer for CSV data
 
 
 def interpolate_gps(point, satellite_width, satellite_height, corner_coordinates):
     """Convert image coordinates to GPS using interpolation."""
-    x = np.array([0, 0, satellite_width, satellite_width])
-    y = np.array([0, satellite_height, satellite_height, 0])
-    
-    latlon = LinearNDInterpolator((x, y), corner_coordinates)
-    latpoint = latlon(point[0], point[1])
-    lat = latpoint[0]
-    lon = latpoint[1]
-    
-    return lon, lat
+    try:
+        x = np.array([0, 0, satellite_width, satellite_width])
+        y = np.array([0, satellite_height, satellite_height, 0])
+        
+        latlon = LinearNDInterpolator((x, y), corner_coordinates)
+        latpoint = latlon(point[0], point[1])
+        lat = latpoint[0]
+        lon = latpoint[1]
+        
+        # Validate interpolation results
+        if math.isnan(lat) or math.isnan(lon):
+            return None, None
+            
+        return lon, lat
+    except Exception as e:
+        return None, None
 
 
 def define_stationary_box(is_moving, id, centroid, lon, lat):
@@ -125,6 +142,68 @@ def define_stationary_box(is_moving, id, centroid, lon, lat):
         return None, None
     else:
         return id_bboxes[detection_id]['recorded_lon'], id_bboxes[detection_id]['recorded_lat']
+
+
+def log_detection_to_csv(person_id, bbox, confidence, detect_class, is_moving, lat, lon, 
+                        seconds_frame, timestamp_current, creating_timestamp, csv_file):
+    """Log detection data to CSV file similar to original BIP_ZEDCAM format."""
+    
+    # Convert bbox to string format like original
+    bbox_str = f"[array({bbox})]" if bbox is not None else "[]"
+    
+    # Prepare row data
+    row_data = {
+        'id': person_id,
+        'box': bbox_str,
+        'conf': confidence,
+        'detect_class': detect_class,
+        'is_moving': is_moving,
+        'lat': lat,
+        'lon': lon,
+        'seconds_frame': seconds_frame,
+        'timestamp_current': timestamp_current,
+        'creating_timestamp': creating_timestamp
+    }
+    
+    # Check if CSV file exists, if not create with headers
+    csv_path = Path(RESULTS_DIR) / csv_file
+    file_exists = csv_path.exists()
+    
+    # Append to CSV
+    with open(csv_path, 'a', newline='') as file:
+        fieldnames = ['id', 'box', 'conf', 'detect_class', 'is_moving', 'lat', 'lon', 
+                     'seconds_frame', 'timestamp_current', 'creating_timestamp']
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+        
+        # Write header if file is new
+        if not file_exists:
+            writer.writeheader()
+        
+        writer.writerow(row_data)
+
+
+def validate_stationary_frames(person_id, is_moving):
+    """Track consecutive stationary frames and validate minimum threshold."""
+    global stationary_frame_counts
+    
+    if person_id not in stationary_frame_counts:
+        stationary_frame_counts[person_id] = {'consecutive_stationary': 0, 'is_validated': False}
+    
+    if not is_moving:
+        # Increment stationary count
+        stationary_frame_counts[person_id]['consecutive_stationary'] += 1
+        
+        # Check if we've reached minimum threshold
+        if (stationary_frame_counts[person_id]['consecutive_stationary'] >= GEOJSON_MIN_STATIONARY_FRAMES and 
+            not stationary_frame_counts[person_id]['is_validated']):
+            stationary_frame_counts[person_id]['is_validated'] = True
+            return True  # This is a newly validated stationary event
+    else:
+        # Reset if person starts moving
+        stationary_frame_counts[person_id]['consecutive_stationary'] = 0
+        stationary_frame_counts[person_id]['is_validated'] = False
+    
+    return False
 
 
 def calibrate_cam(img, scenario_path: str):
@@ -270,8 +349,9 @@ def debug_mechanism(debug_mode, frame_interval, iter_flag):
     return iter_flag
 
 
-def save_analytics(user_id, is_moving, force_frame, analytics_file):
-    """Simple analytics tracking."""
+def save_analytics(user_id, is_moving, force_frame, analytics_file, lon=None, lat=None, timestamp=None, is_newly_stationary=False):
+    """Enhanced analytics tracking with GeoJSON support and frame validation."""
+    # Simple analytics (existing format)
     try:
         with open(analytics_file, 'r') as file:
             analytics_table = json.load(file)
@@ -289,6 +369,80 @@ def save_analytics(user_id, is_moving, force_frame, analytics_file):
     
     with open(analytics_file, 'w') as file:
         json.dump(analytics_table, file)
+    
+    # GeoJSON analytics (only for newly validated stationary events with valid GPS)
+    if (is_newly_stationary and lon is not None and lat is not None and 
+        not math.isnan(lon) and not math.isnan(lat)):
+        # Calculate accumulated duration for this validated event
+        accumulated_duration = GEOJSON_MIN_STATIONARY_FRAMES * frame_duration
+        save_geojson_analytics(user_id, accumulated_duration, lon, lat, timestamp)
+
+
+def save_geojson_analytics(user_id, duration, lon, lat, timestamp=None):
+    """Save stationary detection data in GeoJSON format."""
+    # Validate coordinates - only save if valid GPS coordinates
+    if (lon is None or lat is None or 
+        math.isnan(lon) or math.isnan(lat) or
+        not isinstance(lon, (int, float)) or not isinstance(lat, (int, float))):
+        return
+    
+    results_dir = Path(RESULTS_DIR)
+    results_dir.mkdir(exist_ok=True)
+    geojson_file = results_dir / GEOJSON_FILE
+    
+    # Load existing GeoJSON data
+    try:
+        with open(geojson_file, 'r') as file:
+            geojson_data = json.load(file)
+    except FileNotFoundError:
+        geojson_data = {
+            "type": "FeatureCollection",
+            "features": []
+        }
+    
+    # Generate timestamp if not provided
+    if timestamp is None:
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+    
+    # Generate unique identifier
+    unique_id = hash(f"{user_id}_{timestamp}_{lon}_{lat}")
+    
+    # Create new feature
+    new_feature = {
+        "type": "Feature",
+        "geometry": {
+            "type": "Point",
+            "coordinates": [lat, lon]  # Coordinates in [latitude, longitude] format
+        },
+        "properties": {
+            "row_id": len(geojson_data["features"]),
+            "tempo_de_permanencia": duration,
+            "id_person": int(user_id),
+            "timestamp": timestamp,
+            "unique_identifier": abs(unique_id)  # Make positive
+        }
+    }
+    
+    # Check if we should add or update existing feature
+    existing_feature_index = None
+    for i, feature in enumerate(geojson_data["features"]):
+        if (feature["properties"]["id_person"] == int(user_id) and 
+            abs(feature["geometry"]["coordinates"][0] - lat) < 0.0001 and 
+            abs(feature["geometry"]["coordinates"][1] - lon) < 0.0001):
+            existing_feature_index = i
+            break
+    
+    if existing_feature_index is not None:
+        # Update existing feature duration
+        geojson_data["features"][existing_feature_index]["properties"]["tempo_de_permanencia"] += duration
+        geojson_data["features"][existing_feature_index]["properties"]["timestamp"] = timestamp
+    else:
+        # Add new feature
+        geojson_data["features"].append(new_feature)
+    
+    # Save updated GeoJSON
+    with open(geojson_file, 'w') as file:
+        json.dump(geojson_data, file, indent=2)
 
 
 def create_terminal_overlay(width, height, log_messages):
@@ -412,7 +566,8 @@ def main(file_to_process=None):
     print("⌨️  CONTROLS:")
     print("   • Press 'q' or 'Q' to quit")
     print("   • Press 'ESC' to quit")
-    print("   • Focus the video window first!")
+    print("   • IMPORTANT: Click on the video window to focus it!")
+    print("   • Make sure the video window is selected/active")
     print("=" * 60)
     
     # Runtime variables
@@ -548,6 +703,12 @@ def main(file_to_process=None):
                     
                     x, y = centroid[0], centroid[1]
                     lon, lat = interpolate_gps((x, y), satellite_width, satellite_height, corner_coordinates)
+                    
+                    # Skip GPS processing if interpolation failed
+                    if lon is None or lat is None:
+                        log_messages.append(f"ID {person_id} GPS interpolation failed - skipping")
+                        continue
+                    
                     gps_msg = f"ID {person_id} GPS: ({lat:.6f}, {lon:.6f})"
                     log_messages.append(gps_msg)
                     print(gps_msg)
@@ -558,8 +719,40 @@ def main(file_to_process=None):
                     if stationary_lon is not None and stationary_lat is not None:
                         log_messages.append(f"ID {person_id} STATIONARY at: ({stationary_lat:.6f}, {stationary_lon:.6f})")
                     
-                    # Save analytics
-                    save_analytics(int(detect.boxes.id), is_moving, FORCE_FRAME, analytics_file)
+                    # Generate timestamps
+                    current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    creating_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+                    
+                    # Log all detection data to CSV (like original BIP_ZEDCAM)
+                    bbox_coords = detect.boxes.xyxy[0].cpu().numpy().tolist()
+                    confidence = float(detect.boxes.conf[0].cpu().numpy())
+                    detect_class = 0  # Person class
+                    frame_duration = 1 / FORCE_FRAME
+                    
+                    log_detection_to_csv(
+                        person_id=person_id,
+                        bbox=bbox_coords,
+                        confidence=confidence,
+                        detect_class=detect_class,
+                        is_moving=is_moving,
+                        lat=lat,
+                        lon=lon,
+                        seconds_frame=frame_duration,
+                        timestamp_current=current_timestamp,
+                        creating_timestamp=creating_timestamp,
+                        csv_file=DETAILED_CSV_FILE
+                    )
+                    
+                    # Check if this is a validated stationary event (configurable consecutive frames)
+                    is_newly_stationary = validate_stationary_frames(person_id, is_moving)
+                    
+                    # Use stationary coordinates for analytics if person is stationary, otherwise use current coordinates
+                    analytics_lon = stationary_lon if stationary_lon is not None else lon
+                    analytics_lat = stationary_lat if stationary_lat is not None else lat
+                    
+                    # Save analytics (simple format for backward compatibility)
+                    save_analytics(int(detect.boxes.id), is_moving, FORCE_FRAME, analytics_file, 
+                                 analytics_lon, analytics_lat, creating_timestamp, is_newly_stationary)
                     
             except Exception as e:
                 print(f"Error in GPS/BEV processing: {e}")
@@ -569,12 +762,19 @@ def main(file_to_process=None):
         cv2.imshow('Stationary Detector Dashboard', dashboard)
         
         # Handle user input - check for 'q' key immediately after showing frame
-        key = cv2.waitKey(1) & 0xFF
+        # Use a longer wait time to ensure key detection works properly
+        key = cv2.waitKey(100) & 0xFF
+        
+        # Check for quit keys
         if key == ord('q') or key == ord('Q') or key == 27:  # 'q', 'Q' or ESC to quit
             print("\n=== Program stopped by user (q pressed) ===")
+            log_messages.append("USER REQUESTED EXIT - Shutting down...")
             cv2.destroyAllWindows()
             ITER = False
             break  # Exit the loop immediately
+        elif key != 255:  # Any other key was pressed
+            print(f"Key pressed: {key} (char: {chr(key)})")
+        
         elif DEBUG_MODE:
             ITER = debug_mechanism(DEBUG_MODE, FRAME_INTERVAL, ITER)
             if not ITER:  # If debug mechanism returned False, break the loop

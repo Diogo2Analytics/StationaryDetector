@@ -5,7 +5,7 @@
         ]
     ],
     "image_used": [
-        "src/yolo_cam/resources/campo_ourique_portão_secundaria.jpeg"
+        "resources/satellite_images/R. Andrade Corvo.png"
     ],
     "cam_matrix": [
         [
@@ -40,25 +40,25 @@
     ],
     "corner_coordinates": [
         [
-            -9.1702299,
-            38.7174781
+            -9.147863,
+            38.730403
         ],
         [
-            -9.1702293,
-            38.7171197
+            -9.147863,
+            38.730015
         ],
         [
-            -9.1696365,
-            38.7171223
+            -9.147383,
+            38.730015
         ],
         [
-            -9.1696378,
-            38.7174791
+            -9.147383,
+            38.730403
         ]
     ],
     "info_regarding_source_pts": [
         [
-            "poste onde o manel esta no inicio , banco la ao fundo de pedra, poste onde o zelis estava"
+            ""
         ]
     ],
     "source_pts": [
