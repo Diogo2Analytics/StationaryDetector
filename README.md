@@ -62,7 +62,7 @@ The system captures the first frame where no people are visible to establish a c
   <p><em>Processed threshold analysis for movement detection</em></p>
 </div>
 
-### Step 5: Spatial & Temporal Mapping  
+### Step 4: Spatial & Temporal Mapping  
 **Homography-based Coordinate Conversion**: Transforms pixel coordinates to real-world GPS positions using the calibrated transformation matrix. **Duration Tracking**: Accumulates time spent in stationary states per individual, maintaining historical data for comprehensive pattern analysis.
 
 <div align="center">
