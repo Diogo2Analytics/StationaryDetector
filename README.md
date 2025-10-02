@@ -21,7 +21,7 @@ The system addresses a fundamental challenge in urban analytics: **how to automa
 
 Due to GDPR constraints, we cannot store video footage - only metadata information. For demonstrations, we use pre-recorded content, but the production system operates on live streams without retention.
 
-The analysis follows a sequential 6-step process:
+The analysis follows a sequential 5-step process:
 
 ### Step 1: Camera Calibration & Setup
 We obtain a satellite view of the analysis location and map the corners of the camera field of view to real-world GPS coordinates for accurate spatial transformation. This enables precise conversion between pixel coordinates and geographic locations.
