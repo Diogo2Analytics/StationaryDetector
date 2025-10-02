@@ -26,11 +26,18 @@ The analysis follows a sequential 6-step process:
 ### Step 1: Camera Calibration & Setup
 We obtain a satellite view of the analysis location and map the corners of the camera field of view to real-world GPS coordinates for accurate spatial transformation. This enables precise conversion between pixel coordinates and geographic locations.
 
-### Step 2: Background Reference Capture  
-The system captures the first frame where no people are visible to establish a clean background reference for movement detection algorithms.
+<div align="left">
+  <img src="footage/homography1.png" alt="Camera Calibration Setup" width="600"/>
+  <p><em>GPS corner mapping for camera-to-world coordinate transformation</em></p>
+</div>
 
-### Step 3: Person Detection & Tracking
-**YOLO11 Person Detection**: Identifies individuals in pixel coordinates using an advanced object detection model that distinguishes between different people. The system assigns persistent IDs to track individuals across frames. If someone is occluded for extended periods, they may be assigned a new ID upon reappearance.
+<div align="right">
+  <img src="footage/homography2.png" alt="Homography Matrix Setup" width="600"/>
+  <p><em>Homography transformation matrix calibration process</em></p>
+</div>
+
+### Step 2: Background Reference & Person Detection
+The system captures the first frame where no people are visible to establish a clean background reference for movement detection algorithms. **YOLO11 Person Detection**: Simultaneously identifies individuals in pixel coordinates using an advanced object detection model that distinguishes between different people. The system assigns persistent IDs to track individuals across frames. If someone is occluded for extended periods, they may be assigned a new ID upon reappearance.
 
 <div align="center">
   <img src="footage/original_footage_20251002_090908.gif" alt="Original Footage" width="600"/>
@@ -42,7 +49,7 @@ The system captures the first frame where no people are visible to establish a c
   <p><em>YOLO detection with bounding boxes and persistent ID tracking</em></p>
 </div>
 
-### Step 4: Movement Classification
+### Step 3: Movement Classification
 **MOG2 Background Subtraction**: Analyzes pixel-level changes within each person's bounding box. If pixel variation exceeds the 20% threshold, the person is classified as "moving"; otherwise "stationary". The frame rate is used to calculate accurate time duration in seconds.
 
 <div align="center">
@@ -57,16 +64,6 @@ The system captures the first frame where no people are visible to establish a c
 
 ### Step 5: Spatial & Temporal Mapping  
 **Homography-based Coordinate Conversion**: Transforms pixel coordinates to real-world GPS positions using the calibrated transformation matrix. **Duration Tracking**: Accumulates time spent in stationary states per individual, maintaining historical data for comprehensive pattern analysis.
-
-<div align="left">
-  <img src="footage/homography1.png" alt="Camera Calibration Setup" width="600"/>
-  <p><em>GPS corner mapping for camera-to-world coordinate transformation</em></p>
-</div>
-
-<div align="right">
-  <img src="footage/homography2.png" alt="Homography Matrix Setup" width="600"/>
-  <p><em>Homography transformation matrix calibration process</em></p>
-</div>
 
 <div align="center">
   <img src="footage/satellite_view_20251002_090908.gif" alt="GPS Mapping" width="600"/>
