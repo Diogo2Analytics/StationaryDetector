@@ -4,7 +4,7 @@ A computer vision system for analyzing pedestrian behavior and dwell patterns in
 
 fiux this  overview
 <div align="center">
-  <img src="footage/complete_dashboard_20251002_090908.gif" alt="Analysis Workflow" width="600"/>
+  <img src="footage/complete_dashboard_20251002_090908.gif" alt="Analysis Workflow" width="800"/>
   <p><em>System workflow: from video input to behavioral analytics</em></p>
 </div>
 
