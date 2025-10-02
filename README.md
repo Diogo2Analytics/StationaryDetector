@@ -32,8 +32,13 @@ The analysis follows a sequential 6-step process:
 ### Step 1: Initial Calibration Setup
 We obtain a satellite view of the analysis location and map the corners of the camera view to real-world GPS coordinates for spatial interpolation.
 
-<div align="center">
-  <img src="images/step1-calibration.png" alt="Camera Calibration Setup" width="600"/>
+<div align="left">
+  <img src="footage/homography1.png" alt="Camera Calibration Setup" width="600"/>
+  <p><em>GPS corner mapping for camera-to-world coordinate transformation</em></p>
+</div>
+
+<div align="right">
+  <img src="footage/homography2.png" alt="Camera Calibration Setup" width="600"/>
   <p><em>GPS corner mapping for camera-to-world coordinate transformation</em></p>
 </div>
 
@@ -55,12 +60,12 @@ The system ingests the first frame where no people are visible to establish a cl
 ### Step 4: Movement Classification
 **MOG2 Background Subtraction**: Analyzes pixel-level changes within each person's bounding box. If variation exceeds 20% threshold, the person is classified as "moving"; otherwise "stationary". Frame rate is used to calculate time duration in seconds.
 
-<div align="center">
+<div align="left">
   <img src="footage/movement_mask_20251002_090908.gif" alt="Movement Analysis" width="600"/>
   <p><em>Background subtraction showing motion areas in white</em></p>
 </div>
 
-<div align="center">
+<div align="right">
   <img src="footage/threshold_analysis_20251002_090908.gif" alt="Movement Analysis" width="600"/>
   <p><em>Background subtraction showing motion areas in white</em></p>
 </div>
