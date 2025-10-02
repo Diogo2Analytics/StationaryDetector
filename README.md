@@ -70,7 +70,7 @@ The system captures the first frame where no people are visible to establish a c
   <p><em>Bird's eye view with GPS coordinate transformation and tracking points</em></p>
 </div>
 
-### Step 6: Data Export & Analytics
+### Step 5: Data Export & Analytics
 **GeoJSON Generation**: Compiles stationary events by person ID, recording precise locations where individuals spent time. Multiple stationary locations per person are tracked separately for detailed behavioral analysis. **Real-time Monitoring**: Provides live system logs and analytics for immediate insights.
 
 <div align="center">
