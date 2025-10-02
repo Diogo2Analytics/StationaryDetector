@@ -1,17 +1,19 @@
 # Stationary Detector
 
-A computer vision system for analyzing pedestrian behavior and dwell patterns in urban environments.
+A computer vision multi-layer approach for analyzing pedestrian behavior and dwell patterns in urban environments.
 
 <div align="center">
   <img src="footage/complete_dashboard_20251002_090908.gif" alt="Complete Dashboard Overview" width="1000"/>
-  <p><em>Real-time analysis dashboard: comprehensive view of the detection system</em></p>
+  <p><em>Analysis dashboard showing the detection system</em></p>
 </div>
 
 ## Background
 
-This project emerged from urban analytics work conducted for BipZip Lisbon and EDP Move in Braga. The methodology focuses on analyzing mixed-use spaces where cars and pedestrians coexist - particularly around schools and transit areas - to identify where people congregate and spend the most time. Due to GDPR compliance requirements, we cannot store any video footage, only anonymized metadata values.
+This project emerged from urban analytics work conducted for BipZip Lisbon and EDP Move in Braga. The methodology focuses on analyzing mixed-use spaces where cars and pedestrians coexist - particularly around schools and transit areas - to identify where people spend the most time. Due to GDPR compliance requirements, we cannot store any video footage, only anonymized metadata values. Most work was done in public schools that lacked proper infrastructure.
 
-The core research question is: **How to track where public space users occupy specific areas and measure their dwell time.** Understanding these patterns enables evidence-based urban interventions, such as converting parking spaces to seating areas, installing shade structures for parents waiting for children, or redesigning pedestrian infrastructure based on actual usage patterns.
+## Problem to solve
+
+The problem we wanted to solve was: **How to identify areas of public space occupied by pedestrians and measure the time they remain stationary.** Understanding these patterns enables evidence-based urban interventions, such as converting parking spaces to seating areas, installing shade structures for parents waiting for children, or redesigning pedestrian infrastructure based on actual usage patterns.
 
 This repository contains the computer vision and analysis components. Environmental monitoring (air quality, humidity, temperature) was conducted separately and is not included here.
 
@@ -24,7 +26,7 @@ Due to GDPR constraints, we cannot store video footage - only metadata informati
 The analysis follows a sequential 5-step process:
 
 ### Step 1: Camera Calibration & Setup
-We obtain a satellite view of the analysis location and map the corners of the camera field of view to real-world GPS coordinates for accurate spatial transformation. This enables precise conversion between pixel coordinates and geographic locations.
+We obtain a satellite view of the analysis location and map the corners of the camera field of view to real-world GPS coordinates for spatial transformation. This enables conversion between pixel coordinates and geographic locations.
 
 <div align="left">
   <img src="footage/homography1.png" alt="Camera Calibration Setup" width="600"/>
@@ -37,7 +39,7 @@ We obtain a satellite view of the analysis location and map the corners of the c
 </div>
 
 ### Step 2: Background Reference & Person Detection
-The system captures the first frame where no people are visible to establish a clean background reference for movement detection algorithms. **YOLO11 Person Detection**: Simultaneously identifies individuals in pixel coordinates using an advanced object detection model that distinguishes between different people. The system assigns persistent IDs to track individuals across frames. If someone is occluded for extended periods, they may be assigned a new ID upon reappearance.
+The system captures the first frame where no people are visible to establish a background reference for movement detection. YOLO8 identifies individuals in pixel coordinates and distinguishes between different people. The system assigns persistent IDs to track individuals across frames. If someone is occluded for extended periods, they may be assigned a new ID upon reappearance.
 
 <div align="center">
   <img src="footage/original_footage_20251002_090908.gif" alt="Original Footage" width="600"/>
@@ -50,7 +52,7 @@ The system captures the first frame where no people are visible to establish a c
 </div>
 
 ### Step 3: Movement Classification
-**MOG2 Background Subtraction**: Analyzes pixel-level changes within each person's bounding box. If pixel variation exceeds the 20% threshold, the person is classified as "moving"; otherwise "stationary". The frame rate is used to calculate accurate time duration in seconds.
+**MOG2 Background Subtraction**: Analyzes pixel changes within each person's bounding box. If pixel variation exceeds the 20% threshold, the person is classified as "moving"; otherwise "stationary." Frame rate is used to calculate time duration in seconds.
 
 <div align="center">
   <img src="footage/movement_mask_20251002_090908.gif" alt="Movement Analysis" width="600"/>
@@ -63,7 +65,7 @@ The system captures the first frame where no people are visible to establish a c
 </div>
 
 ### Step 4: Spatial & Temporal Mapping  
-**Homography-based Coordinate Conversion**: Transforms pixel coordinates to real-world GPS positions using the calibrated transformation matrix. **Duration Tracking**: Accumulates time spent in stationary states per individual, maintaining historical data for comprehensive pattern analysis.
+**Homography Coordinate Conversion**: Transforms pixel coordinates to GPS positions using the transformation matrix. **Duration Tracking**: Accumulates time spent in stationary states per individual, maintaining data for pattern analysis.
 
 <div align="center">
   <img src="footage/satellite_view_20251002_090908.gif" alt="GPS Mapping" width="600"/>
@@ -71,7 +73,7 @@ The system captures the first frame where no people are visible to establish a c
 </div>
 
 ### Step 5: Data Export & Analytics
-**GeoJSON Generation**: Compiles stationary events by person ID, recording precise locations where individuals spent time. Multiple stationary locations per person are tracked separately for detailed behavioral analysis. **Real-time Monitoring**: Provides live system logs and analytics for immediate insights.
+**GeoJSON Generation**: Compiles stationary events by person ID, recording locations where individuals spent time. Multiple stationary locations per person are tracked separately for behavioral analysis. **Real-time Monitoring**: Provides system logs and analytics.
 
 <div align="center">
   <img src="footage/system_log_20251002_090908.gif" alt="System Analytics" width="600"/>
@@ -87,7 +89,7 @@ The system captures the first frame where no people are visible to establish a c
    cd StationaryDetector
    ```
 
-2. Create virtual environment:
+2. Create a virtual environment:
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
@@ -119,7 +121,7 @@ python src/stationary_detector/main.py
 ```
 ## Analytics Output
 
-The system generates multiple output formats for comprehensive analysis:
+The system generates multiple output formats:
 
 ### 1. Simple Analytics (`analytics.json`)
 Basic duration metrics per individual:
@@ -132,7 +134,7 @@ Basic duration metrics per individual:
 ```
 
 ### 2. Geographic Data (`geojson.json`)
-GeoJSON format with GPS coordinates for mapping applications and AutoCAD integration:
+GeoJSON format with GPS coordinates for mapping and AutoCAD integration:
 ```json
 {
   "type": "FeatureCollection",

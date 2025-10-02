@@ -641,10 +641,7 @@ def main(file_to_process=None):
     
     # Load YOLO models
     print("Loading YOLO models...")
-    try:
-        model_object_detection = YOLO("/Users/diogo.martins/Downloads/yolo11l.pt")
-    except Exception as e:
-        YOLO("yolov8n.pt")
+    model_object_detection = YOLO("yolov8n.pt")
         
     
     # Initialize MOG background subtractor
