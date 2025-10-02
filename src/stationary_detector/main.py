@@ -24,15 +24,15 @@ from hachoir.metadata import extractMetadata
 # =============================================================================
 
 # Video and Processing Settings
-DEFAULT_VIDEO_FILE = "resources/videos/2.mp4"
+DEFAULT_VIDEO_FILE = "resources/videos/people_moving.mov"
 FORCE_FRAME = 4  # Frames per second to process
-FRAME_INTERVAL = 10  # Display refresh interval
+FRAME_INTERVAL = 5  # Display refresh interval
 DEBUG_MODE = False
 GPS_COORDINATES = True
 
 # Detection Settings
 CONFIDENCE_THRESHOLD = 0.20  # YOLO confidence threshold
-MOVEMENT_THRESHOLD = 0.18  # Movement detection threshold (0-1)
+MOVEMENT_THRESHOLD = 0.20  # Movement detection threshold (0-1)
 IMAGE_SIZE = 1920  # YOLO processing image size
 
 # GeoJSON Generation Settings
@@ -40,7 +40,7 @@ GEOJSON_MIN_STATIONARY_FRAMES = 6  # Minimum consecutive stationary frames befor
 
 # Resource Paths
 SCENARIO_FILE = "resources/camera_parameters/R_Andrade_Corvo.json"
-SATELLITE_IMAGE = "resources/satellite_images/R. Andrade Corvo.png"
+SATELLITE_IMAGE = "resources/satellite_images/R_Andrade Corvo.png"
 RESULTS_DIR = "results"
 ANALYTICS_FILE = "analytics.json"
 GEOJSON_FILE = "geojson.json"
@@ -49,9 +49,9 @@ DETAILED_CSV_FILE = "detailed_results.csv"
 
 
 # Dashboard Settings
-PANEL_WIDTH = 480  # Smaller panels to fit more views
-PANEL_HEIGHT = 360
-DASHBOARD_BORDER = 2
+PANEL_WIDTH = 1120  # Width for video panels (16:9 aspect ratio) - Good balance of size and performance
+PANEL_HEIGHT = 630  # Height for video panels (560/16*9 = 315)
+DASHBOARD_BORDER = 4  # Larger border for better spacing
 
 # MOG2 Background Subtractor Settings
 MOG_HISTORY = 300
@@ -450,33 +450,63 @@ def create_terminal_overlay(width, height, log_messages):
     # Create black background
     terminal_img = np.zeros((height, width, 3), dtype=np.uint8)
     
-    # Terminal styling
+    # Terminal styling - adjusted for larger panels
     font = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale = 0.5
+    font_scale = 0.7  # Larger font for bigger panels
     text_color = (0, 255, 0)  # Green terminal text
-    line_height = 20
-    margin = 10
+    line_height = 28  # More space between lines
+    margin = 20  # Larger margin
     
-    # Add title
-    cv2.putText(terminal_img, "DETECTION LOG", (margin, 30), 
-                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+    # Add title (larger and more prominent)
+    cv2.putText(terminal_img, "DETECTION LOG", (margin, 45), 
+                cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
     
-    # Add log messages (last 15 lines)
-    start_y = 60
-    for i, message in enumerate(log_messages[-15:]):
+    # Add log messages (adjust number based on panel height)
+    max_lines = min(20, (height - 80) // line_height)  # Calculate how many lines fit
+    start_y = 80
+    
+    for i, message in enumerate(log_messages[-max_lines:]):
         y_pos = start_y + (i * line_height)
-        if y_pos < height - 10:
-            # Truncate long messages
-            if len(message) > 60:
-                message = message[:57] + "..."
+        if y_pos < height - 15:
+            # Adjust message length based on panel width
+            max_chars = (width - margin * 2) // 8  # Rough character width estimation
+            if len(message) > max_chars:
+                message = message[:max_chars-3] + "..."
             cv2.putText(terminal_img, message, (margin, y_pos), 
                        font, font_scale, text_color, 1)
     
     return terminal_img
 
 
+def resize_maintain_aspect_ratio(img, target_width, target_height):
+    """Resize image maintaining aspect ratio, padding with black if needed."""
+    h, w = img.shape[:2]
+    
+    # Calculate scaling factor to fit within target dimensions
+    scale = min(target_width / w, target_height / h)
+    
+    # Calculate new dimensions
+    new_w = int(w * scale)
+    new_h = int(h * scale)
+    
+    # Resize the image
+    resized = cv2.resize(img, (new_w, new_h))
+    
+    # Create black canvas with target dimensions
+    canvas = np.zeros((target_height, target_width, 3), dtype=np.uint8)
+    
+    # Calculate position to center the resized image
+    x_offset = (target_width - new_w) // 2
+    y_offset = (target_height - new_h) // 2
+    
+    # Place resized image on canvas
+    canvas[y_offset:y_offset+new_h, x_offset:x_offset+new_w] = resized
+    
+    return canvas
+
+
 def create_dashboard(original_frame, detection_frame, satellite_img, foreground_mask, frame_count, log_messages=None):
-    """Create a 3x2 dashboard showing all views including shadow/movement detection."""
+    """Create a 3x2 dashboard maintaining 16:9 aspect ratio for video content."""
     if log_messages is None:
         log_messages = []
     
@@ -490,14 +520,14 @@ def create_dashboard(original_frame, detection_frame, satellite_img, foreground_
     dashboard_height = (panel_height * 2) + (border * 3)
     dashboard = np.zeros((dashboard_height, dashboard_width, 3), dtype=np.uint8)
     
-    # Resize all panels to standard size
+    # Resize video panels maintaining aspect ratio (no deformation)
     # Top row: Original footage, Detection view, Movement/Shadow mask
-    original_resized = cv2.resize(original_frame, (panel_width, panel_height))
-    detection_resized = cv2.resize(detection_frame, (panel_width, panel_height))
+    original_resized = resize_maintain_aspect_ratio(original_frame, panel_width, panel_height)
+    detection_resized = resize_maintain_aspect_ratio(detection_frame, panel_width, panel_height)
     
     # Convert foreground mask to 3-channel for display
     foreground_colored = cv2.applyColorMap(foreground_mask, cv2.COLORMAP_HOT)
-    movement_resized = cv2.resize(foreground_colored, (panel_width, panel_height))
+    movement_resized = resize_maintain_aspect_ratio(foreground_colored, panel_width, panel_height)
     
     # Bottom row: Satellite view, Terminal log, and a combined analysis view
     satellite_resized = cv2.resize(satellite_img, (panel_width, panel_height))
@@ -506,12 +536,13 @@ def create_dashboard(original_frame, detection_frame, satellite_img, foreground_
     # Create a combined analysis view (movement threshold visualization)
     fgthres = cv2.threshold(foreground_mask.copy(), 200, 255, cv2.THRESH_BINARY)[1]
     analysis_colored = cv2.applyColorMap(fgthres, cv2.COLORMAP_VIRIDIS)
-    analysis_resized = cv2.resize(analysis_colored, (panel_width, panel_height))
+    analysis_resized = resize_maintain_aspect_ratio(analysis_colored, panel_width, panel_height)
     
-    # Add labels to each panel
+    # Add labels to each panel (adjusted for larger panels)
     def add_panel_label(img, label, color=(255, 255, 255)):
-        cv2.rectangle(img, (0, 0), (panel_width, 25), (0, 0, 0), -1)
-        cv2.putText(img, label, (8, 18), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+        label_height = 40  # Bigger label area for larger panels
+        cv2.rectangle(img, (0, 0), (panel_width, label_height), (0, 0, 0), -1)
+        cv2.putText(img, label, (15, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
     
     add_panel_label(original_resized, "ORIGINAL FOOTAGE")
     add_panel_label(detection_resized, "DETECTION VIEW")
@@ -541,15 +572,17 @@ def create_dashboard(original_frame, detection_frame, satellite_img, foreground_
     # Bottom-right: Threshold analysis
     dashboard[border*2+panel_height:border*2+panel_height*2, border*3+panel_width*2:border*3+panel_width*3] = analysis_resized
     
-    # Add main title and frame counter
-    title_area_height = 50
+    # Add main title and frame counter (adjusted for larger dashboard)
+    title_area_height = 70  # Taller title area
     title_dashboard = np.zeros((title_area_height, dashboard_width, 3), dtype=np.uint8)
-    cv2.putText(title_dashboard, f"STATIONARY DETECTOR DASHBOARD - Frame: {frame_count}", 
-                (20, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
     
-    # Add instruction text
+    # Main title - larger and more prominent
+    cv2.putText(title_dashboard, f"STATIONARY DETECTOR DASHBOARD - Frame: {frame_count}", 
+                (30, 45), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 3)
+    
+    # Add instruction text - larger and better positioned
     cv2.putText(title_dashboard, "Press 'q' to quit", 
-                (dashboard_width - 150, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (200, 200, 200), 1)
+                (dashboard_width - 250, 45), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (200, 200, 200), 2)
     
     # Combine title with dashboard
     final_dashboard = np.vstack([title_dashboard, dashboard])
@@ -608,7 +641,8 @@ def main(file_to_process=None):
     
     # Load YOLO models
     print("Loading YOLO models...")
-    model_object_detection = YOLO("yolov8l.pt")
+    model_object_detection = YOLO("yolov8n.pt")
+        
     
     # Initialize MOG background subtractor
     mog = cv2.createBackgroundSubtractorMOG2(
