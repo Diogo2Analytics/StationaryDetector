@@ -2,24 +2,18 @@
 
 A computer vision system for analyzing pedestrian behavior and dwell patterns in urban environments.
 
-fiux this  overview
 <div align="center">
-  <img src="footage/complete_dashboard_20251002_090908.gif" alt="Analysis Workflow" width="1000"/>
-  <p><em>System workflow: from video input to behavioral analytics</em></p>
+  <img src="footage/complete_dashboard_20251002_090908.gif" alt="Complete Dashboard Overview" width="1000"/>
+  <p><em>Real-time analysis dashboard: comprehensive view of the detection system</em></p>
 </div>
 
 ## Background
 
-This project emerged from urban analytics work conducted for BipZip Lisbon and EDP Move in Braga. The methodology focuses on analyzing mixed-use spaces where cars and pedestrians coexist - particularly around schools and transit areas - to identify where people congregate and spend the most time. There is also a need that due to RGPD we cannot store any video footage, only metadata values
+This project emerged from urban analytics work conducted for BipZip Lisbon and EDP Move in Braga. The methodology focuses on analyzing mixed-use spaces where cars and pedestrians coexist - particularly around schools and transit areas - to identify where people congregate and spend the most time. Due to GDPR compliance requirements, we cannot store any video footage, only anonymized metadata values.
 
-The core research question was: **How to track where a public space user uses a specifc space and how to track its permanance time** Understanding these patterns enables evidence-based urban interventions, such as converting parking spaces to seating areas, installing shade structures for parents waiting for children, or redesigning pedestrian infrastructure based on actual usage patterns.
+The core research question is: **How to track where public space users occupy specific areas and measure their dwell time.** Understanding these patterns enables evidence-based urban interventions, such as converting parking spaces to seating areas, installing shade structures for parents waiting for children, or redesigning pedestrian infrastructure based on actual usage patterns.
 
 This repository contains the computer vision and analysis components. Environmental monitoring (air quality, humidity, temperature) was conducted separately and is not included here.
-
-<div align="center">
-  <img src="images/workflow-diagram.png" alt="Analysis Workflow" width="600"/>
-  <p><em>System workflow: from video input to behavioral analytics</em></p>
-</div>
 
 ## Technical Approach
 
@@ -29,8 +23,40 @@ Due to GDPR constraints, we cannot store video footage - only metadata informati
 
 The analysis follows a sequential 6-step process:
 
-### Step 1: Initial Calibration Setup
-We obtain a satellite view of the analysis location and map the corners of the camera view to real-world GPS coordinates for spatial interpolation.
+### Step 1: Camera Calibration & Setup
+We obtain a satellite view of the analysis location and map the corners of the camera field of view to real-world GPS coordinates for accurate spatial transformation. This enables precise conversion between pixel coordinates and geographic locations.
+
+### Step 2: Background Reference Capture  
+The system captures the first frame where no people are visible to establish a clean background reference for movement detection algorithms.
+
+### Step 3: Person Detection & Tracking
+**YOLO11 Person Detection**: Identifies individuals in pixel coordinates using an advanced object detection model that distinguishes between different people. The system assigns persistent IDs to track individuals across frames. If someone is occluded for extended periods, they may be assigned a new ID upon reappearance.
+
+<div align="center">
+  <img src="footage/original_footage_20251002_090908.gif" alt="Original Footage" width="600"/>
+  <p><em>Original camera input showing the monitored area</em></p>
+</div>
+
+<div align="center">
+  <img src="footage/detection_view_20251002_090908.gif" alt="Person Detection" width="600"/>
+  <p><em>YOLO detection with bounding boxes and persistent ID tracking</em></p>
+</div>
+
+### Step 4: Movement Classification
+**MOG2 Background Subtraction**: Analyzes pixel-level changes within each person's bounding box. If pixel variation exceeds the 20% threshold, the person is classified as "moving"; otherwise "stationary". The frame rate is used to calculate accurate time duration in seconds.
+
+<div align="center">
+  <img src="footage/movement_mask_20251002_090908.gif" alt="Movement Analysis" width="600"/>
+  <p><em>Background subtraction highlighting motion areas in white</em></p>
+</div>
+
+<div align="center">
+  <img src="footage/threshold_analysis_20251002_090908.gif" alt="Threshold Analysis" width="600"/>
+  <p><em>Processed threshold analysis for movement detection</em></p>
+</div>
+
+### Step 5: Spatial & Temporal Mapping  
+**Homography-based Coordinate Conversion**: Transforms pixel coordinates to real-world GPS positions using the calibrated transformation matrix. **Duration Tracking**: Accumulates time spent in stationary states per individual, maintaining historical data for comprehensive pattern analysis.
 
 <div align="left">
   <img src="footage/homography1.png" alt="Camera Calibration Setup" width="600"/>
@@ -38,52 +64,21 @@ We obtain a satellite view of the analysis location and map the corners of the c
 </div>
 
 <div align="right">
-  <img src="footage/homography2.png" alt="Camera Calibration Setup" width="600"/>
-  <p><em>GPS corner mapping for camera-to-world coordinate transformation</em></p>
+  <img src="footage/homography2.png" alt="Homography Matrix Setup" width="600"/>
+  <p><em>Homography transformation matrix calibration process</em></p>
 </div>
-
-
-### Step 3: Person Detection & Tracking and settings  Background Reference Capture  
-**YOLOv8 Person Detection**: Identifies individuals in pixel coordinates using a model that distinguishes between different people. If someone is occluded for extended periods, they may be counted as a new person upon reappearance.
-The system ingests the first frame where no people are visible to establish a clean background reference for movement detection.
-
-<div align="center">
-  <img src="footage/original_footage_20251002_090908.gif" alt="Person Detection" width="600"/>
-  <p><em>YOLO bounding boxes with persistent ID tracking</em></p>
-</div>
-
-<div align="center">
-  <img src="footage/detection_view_20251002_090908.gif" alt="Person Detection" width="600"/>
-  <p><em>YOLO bounding boxes with persistent ID tracking</em></p>
-</div>
-
-### Step 4: Movement Classification
-**MOG2 Background Subtraction**: Analyzes pixel-level changes within each person's bounding box. If variation exceeds 20% threshold, the person is classified as "moving"; otherwise "stationary". Frame rate is used to calculate time duration in seconds.
-
-<div align="left">
-  <img src="footage/movement_mask_20251002_090908.gif" alt="Movement Analysis" width="600"/>
-  <p><em>Background subtraction showing motion areas in white</em></p>
-</div>
-
-<div align="right">
-  <img src="footage/threshold_analysis_20251002_090908.gif" alt="Movement Analysis" width="600"/>
-  <p><em>Background subtraction showing motion areas in white</em></p>
-</div>
-
-### Step 5: Spatial & Temporal Mapping  
-**Homography-based Coordinate Conversion**: Transforms pixel coordinates to real-world GPS positions. **Duration Tracking**: Accumulates time spent in stationary states per individual, maintaining historical data for pattern analysis.
 
 <div align="center">
   <img src="footage/satellite_view_20251002_090908.gif" alt="GPS Mapping" width="600"/>
-  <p><em>GPS coordinate transformation and temporal tracking</em></p>
+  <p><em>Bird's eye view with GPS coordinate transformation and tracking points</em></p>
 </div>
 
-### Step 6: Data Export & Visualization
-**GeoJSON Generation**: Compiles stationary events by person ID, averaging locations where individuals spent time. Multiple stationary locations per person are tracked separately. **Heatmap Visualization**: Creates geographic heatmaps showing all accumulated dwell pattern data.
+### Step 6: Data Export & Analytics
+**GeoJSON Generation**: Compiles stationary events by person ID, recording precise locations where individuals spent time. Multiple stationary locations per person are tracked separately for detailed behavioral analysis. **Real-time Monitoring**: Provides live system logs and analytics for immediate insights.
 
 <div align="center">
-  <img src="footage/system_log_20251002_090908.gif" alt="Data Export" width="600"/>
-  <p><em>Final GeoJSON output and heatmap visualization</em></p>
+  <img src="footage/system_log_20251002_090908.gif" alt="System Analytics" width="600"/>
+  <p><em>Real-time system logs and analytics output</em></p>
 </div>
 
 
@@ -111,15 +106,19 @@ The system ingests the first frame where no people are visible to establish a cl
    poetry install
    ```
 
-## Running it
+## Usage
 
 ```bash
-# Make sure virtual environment is activated
+# Activate the virtual environment
 source .venv/bin/activate
 
-# Run with the included demo video
+# Run the detector with the included demo video
 python src/stationary_detector/main.py
 
+# Controls:
+# • Press 'q' or 'Q' to quit
+# • Press 'ESC' to exit
+# • Click on the video window to ensure it has focus
 ```
 ## Analytics Output
 
@@ -136,8 +135,7 @@ Basic duration metrics per individual:
 ```
 
 ### 2. Geographic Data (`geojson.json`)
-GeoJSON format with GPS coordinates for mapping applications:
-for using in autocad
+GeoJSON format with GPS coordinates for mapping applications and AutoCAD integration:
 ```json
 {
   "type": "FeatureCollection",
