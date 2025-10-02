@@ -2,8 +2,11 @@
 
 A computer vision system for analyzing pedestrian behavior and dwell patterns in urban environments.
 
-![Dashboard Overview](footage/complete_dashboard_20251002_090908.gif)
-*Real-time dashboard showing multi-panel analysis of pedestrian behavior*
+fiux this  overview
+<div align="center">
+  <img src="footage/complete_dashboard_20251002_090908.gif" alt="Analysis Workflow" width="600"/>
+  <p><em>System workflow: from video input to behavioral analytics</em></p>
+</div>
 
 ## Background
 
