@@ -156,3 +156,5 @@ GeoJSON format with GPS coordinates for mapping and AutoCAD integration:
   ]
 }
 ```
+### Contributor
+Diogo Martins - https://www.linkedin.com/in/diogo-martins-/
