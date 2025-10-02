@@ -2,7 +2,7 @@
 
 A computer vision system for analyzing pedestrian behavior and dwell patterns in urban environments.
 
-![Dashboard Overview](images/dashboard-screenshot.png)
+![Dashboard Overview](footage/complete_dashboard_20251002_090908.gif)
 *Real-time dashboard showing multi-panel analysis of pedestrian behavior*
 
 ## Background
@@ -34,19 +34,18 @@ We obtain a satellite view of the analysis location and map the corners of the c
   <p><em>GPS corner mapping for camera-to-world coordinate transformation</em></p>
 </div>
 
-### Step 2: Background Reference Capture  
+
+### Step 3: Person Detection & Tracking and settings  Background Reference Capture  
+**YOLOv8 Person Detection**: Identifies individuals in pixel coordinates using a model that distinguishes between different people. If someone is occluded for extended periods, they may be counted as a new person upon reappearance.
 The system ingests the first frame where no people are visible to establish a clean background reference for movement detection.
 
 <div align="center">
-  <img src="images/step2-background.png" alt="Background Reference" width="600"/>
-  <p><em>Clean background frame used for MOG2 background subtraction</em></p>
+  <img src="footage/original_footage_20251002_090908.gif" alt="Person Detection" width="600"/>
+  <p><em>YOLO bounding boxes with persistent ID tracking</em></p>
 </div>
 
-### Step 3: Person Detection & Tracking
-**YOLOv8 Person Detection**: Identifies individuals in pixel coordinates using a model that distinguishes between different people. If someone is occluded for extended periods, they may be counted as a new person upon reappearance.
-
 <div align="center">
-  <img src="images/step3-detection.png" alt="Person Detection" width="600"/>
+  <img src="footage/detection_view_20251002_090908.gif" alt="Person Detection" width="600"/>
   <p><em>YOLO bounding boxes with persistent ID tracking</em></p>
 </div>
 
@@ -54,7 +53,12 @@ The system ingests the first frame where no people are visible to establish a cl
 **MOG2 Background Subtraction**: Analyzes pixel-level changes within each person's bounding box. If variation exceeds 20% threshold, the person is classified as "moving"; otherwise "stationary". Frame rate is used to calculate time duration in seconds.
 
 <div align="center">
-  <img src="images/step4-movement.png" alt="Movement Analysis" width="600"/>
+  <img src="footage/movement_mask_20251002_090908.gif" alt="Movement Analysis" width="600"/>
+  <p><em>Background subtraction showing motion areas in white</em></p>
+</div>
+
+<div align="center">
+  <img src="footage/threshold_analysis_20251002_090908.gif" alt="Movement Analysis" width="600"/>
   <p><em>Background subtraction showing motion areas in white</em></p>
 </div>
 
@@ -62,7 +66,7 @@ The system ingests the first frame where no people are visible to establish a cl
 **Homography-based Coordinate Conversion**: Transforms pixel coordinates to real-world GPS positions. **Duration Tracking**: Accumulates time spent in stationary states per individual, maintaining historical data for pattern analysis.
 
 <div align="center">
-  <img src="images/step5-mapping.png" alt="GPS Mapping" width="600"/>
+  <img src="footage/satellite_view_20251002_090908.gif" alt="GPS Mapping" width="600"/>
   <p><em>GPS coordinate transformation and temporal tracking</em></p>
 </div>
 
@@ -70,7 +74,7 @@ The system ingests the first frame where no people are visible to establish a cl
 **GeoJSON Generation**: Compiles stationary events by person ID, averaging locations where individuals spent time. Multiple stationary locations per person are tracked separately. **Heatmap Visualization**: Creates geographic heatmaps showing all accumulated dwell pattern data.
 
 <div align="center">
-  <img src="images/step6-output.png" alt="Data Export" width="600"/>
+  <img src="footage/system_log_20251002_090908.gif" alt="Data Export" width="600"/>
   <p><em>Final GeoJSON output and heatmap visualization</em></p>
 </div>
 
