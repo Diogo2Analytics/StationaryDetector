@@ -86,12 +86,6 @@ The system ingests the first frame where no people are visible to establish a cl
   <p><em>Final GeoJSON output and heatmap visualization</em></p>
 </div>
 
-**Technical Implementation:**
-- **Person Detection & Tracking**: YOLOv8 for detection with persistent ID tracking across video frames
-- **Movement Classification**: MOG2 background subtraction analyzing pixel-level changes within bounding boxes  
-- **Spatial Mapping**: Homography-based camera calibration for GPS coordinate conversion
-- **Temporal Analysis**: Frame-based duration tracking with stationary event validation (6+ consecutive frames)
-
 
 ## Setup
 
@@ -126,48 +120,7 @@ source .venv/bin/activate
 # Run with the included demo video
 python src/stationary_detector/main.py
 
-Press 'q' to quit the application. Make sure to click on the video window first so it can capture the keypress.
-
 ```
-## Configuration
-
-```python
-# Video & Processing Settings
-DEFAULT_VIDEO_FILE = "resources/videos/2.mp4"    # Input video path
-FORCE_FRAME = 4                                  # Processing frame rate, wait 4 frames before analysing
-CONFIDENCE_THRESHOLD = 0.20                      # YOLO detection confidence
-MOVEMENT_THRESHOLD = 0.18                        # Motion detection confidence
-
-# Resource Paths  
-SCENARIO_FILE = "resources/camera_parameters/..."     # Camera calibration
-SATELLITE_IMAGE = "resources/satellite_images/..."    # Base map
-GPS_CORNER_COORDINATES = [...]                        # Area boundaries
-
-# Dashboard Layout
-PANEL_WIDTH = 480                               # Dashboard panel dimensions
-PANEL_HEIGHT = 360
-```
-
-## Dashboard Interface
-
-The application provides a comprehensive real-time visualization through a 3×2 panel dashboard:
-
-**Top Row Analysis:**
-- **Original Footage**: Raw video stream for context and verification
-- **Detection View**: YOLO bounding boxes with persistent person IDs and behavioral state labels
-- **Movement Analysis**: MOG2 background subtraction mask showing detected motion and shadow areas
-
-**Bottom Row Insights:**  
-- **Geographic Projection**: Satellite imagery with GPS-mapped detection points showing real-world positioning
-- **System Analytics**: Live log displaying detection events, movement classifications, and timing metrics
-- **Threshold Visualization**: Binary movement classification output for algorithm transparency and debugging
-
-| Original View | Detection & Tracking | Movement Analysis |
-|---------------|---------------------|-------------------|
-| ![Original](images/panel-original.jpg) | ![Detection](images/panel-detection.jpg) | ![Movement](images/panel-movement.jpg) |
-
-*Dashboard panels showing different analysis views of the same scene*
-
 ## Analytics Output
 
 The system generates multiple output formats for comprehensive analysis:
@@ -184,6 +137,7 @@ Basic duration metrics per individual:
 
 ### 2. Geographic Data (`geojson.json`)
 GeoJSON format with GPS coordinates for mapping applications:
+for using in autocad
 ```json
 {
   "type": "FeatureCollection",
@@ -205,18 +159,3 @@ GeoJSON format with GPS coordinates for mapping applications:
   ]
 }
 ```
-
-**Key Features:**
-- **Stationary Validation**: Only records events after 6+ consecutive stationary frames
-- **GPS Mapping**: Real-world coordinates for geographic analysis  
-- **Temporal Tracking**: Precise timestamps for behavioral pattern analysis
-
-**Real-time Console Output:**
-During processing, the system provides live feedback including:
-- Individual tracking status with persistent person IDs
-- Movement state classification (moving/stationary) with confidence metrics
-- GPS coordinate mapping for each detection event  
-- Cumulative time tracking for stationary behavior patterns
-- System performance metrics and processing statistics
-
-This dual output approach enables both real-time monitoring and post-analysis review of pedestrian behavior patterns.
